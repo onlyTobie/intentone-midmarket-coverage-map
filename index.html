@@ -414,9 +414,9 @@
 
     <aside class="sidebar">
       <div class="sidebar-tabs" role="tablist">
-        <button class="sidebar-tab active-live" data-filter="live" role="tab" aria-selected="true">Live</button>
+        <button class="sidebar-tab" data-filter="live" role="tab" aria-selected="false">Live</button>
         <button class="sidebar-tab" data-filter="proposed" role="tab" aria-selected="false">Proposed</button>
-        <button class="sidebar-tab" data-filter="all" role="tab" aria-selected="false">All</button>
+        <button class="sidebar-tab active-all" data-filter="all" role="tab" aria-selected="true">All</button>
       </div>
       <div class="sidebar-head">
         <h2>Deployments</h2>
@@ -755,7 +755,7 @@
       computePath: "Databricks preferred · NexusOne portable fallback",
       llmPath: "Amazon Bedrock · Claude",
       status: "Ready",
-      hub: { lat: 50.05, lng: 8.75, label: "Frankfurt P0" },
+      hub: { lat: 50.11, lng: 8.68, label: "Frankfurt" },
       catchmentLabel: "DACH + Central/Eastern EU hub",
       countries: ["DE","AT","CH","PL","CZ","SK","HU","RO","BG","SI","HR","EE","LV","LT","UA","MD","RS","BA","ME","MK","AL"],
       countryNames: ["Germany","Austria","Switzerland","Poland","Czechia","Slovakia","Hungary","Romania","Bulgaria","Slovenia","Croatia","Estonia","Latvia","Lithuania","Ukraine","Moldova","Serbia","Bosnia and Herzegovina","Montenegro","North Macedonia","Albania"],
@@ -831,7 +831,7 @@
 
   const byId = Object.fromEntries(DEPLOYMENTS.map(d => [d.id, d]));
   let selectedId = null;
-  let listFilter = "live";
+  let listFilter = "all";
   let countryPaths = null;
   let projection = null;
   let pathGen = null;
@@ -1048,8 +1048,10 @@
       .attr("stroke-width", d => (d.layer === "proposed" || d.layer === "indev") ? 2 : 1.5)
       .attr("fill-opacity", d => d.layer === "proposed" ? 0.15 : d.layer === "indev" ? 0.35 : 1);
     all.select(".pin-label")
-      .text(d => selectedId === d.id ? d.hub.label : "")
-      .attr("fill", "#4c382a");
+      .text(d => d.hub.label)
+      .attr("dy", d => selectedId === d.id ? -14 : -10)
+      .attr("font-weight", d => selectedId === d.id ? "700" : "500")
+      .attr("fill", d => selectedId === d.id ? "#1A1310" : "#4c382a");
   }
 
   const tip = document.getElementById("tooltip");
@@ -1065,21 +1067,32 @@
   }
   function hideTip() { tip.style.display = "none"; }
 
+  function setFilter(filter, { resetZoom = false, clearSelection = true } = {}) {
+    listFilter = filter;
+    document.querySelectorAll(".sidebar-tab").forEach(b => {
+      const on = b.dataset.filter === filter;
+      b.classList.remove("active-live", "active-proposed", "active-all");
+      if (on) b.classList.add("active-" + filter);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    if (clearSelection) selectedId = null;
+    renderList();
+    renderDetail(clearSelection ? null : byId[selectedId]);
+    paintCountries();
+    paintPins();
+    if (resetZoom || filter === "all") {
+      const svg = d3.select("#map-svg");
+      if (!svg.empty() && zoomBehavior) {
+        svg.transition().duration(350).call(zoomBehavior.transform, d3.zoomIdentity);
+      }
+    }
+  }
+
   function setupTabs() {
     document.querySelectorAll(".sidebar-tab").forEach(btn => {
       btn.addEventListener("click", () => {
-        listFilter = btn.dataset.filter;
-        document.querySelectorAll(".sidebar-tab").forEach(b => {
-          b.classList.remove("active-live", "active-proposed", "active-all");
-          b.setAttribute("aria-selected", "false");
-        });
-        btn.classList.add("active-" + listFilter);
-        btn.setAttribute("aria-selected", "true");
-        selectedId = null;
-        renderList();
-        renderDetail(null);
-        paintCountries();
-        paintPins();
+        // All always restores world overview; Live/Proposed keep overview unless a pin is later clicked
+        setFilter(btn.dataset.filter, { resetZoom: true, clearSelection: true });
       });
     });
   }
@@ -1108,7 +1121,7 @@
     svg.call(zoomBehavior);
 
     document.getElementById("btn-reset").addEventListener("click", () => {
-      svg.transition().duration(350).call(zoomBehavior.transform, d3.zoomIdentity);
+      setFilter("all", { resetZoom: true, clearSelection: true });
     });
 
     try {
