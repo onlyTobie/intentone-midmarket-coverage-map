@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- build: card-clip-fix-2 -->
   <title>IntentOne Mid-Market · Data region coverage</title>
   <link rel="stylesheet" href="https://design-system-mu-murex.vercel.app/v/6.24.1/generated/css/tokens.css" />
   <link rel="stylesheet" href="https://design-system-mu-murex.vercel.app/v/6.24.1/generated/css/themes/genome-light.css" />
@@ -167,13 +168,19 @@
       font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
       text-transform: uppercase; color: var(--io-fg-muted); padding: 6px 4px 2px;
     }
+    button.dep-card,
     .dep-card {
+      appearance: none; -webkit-appearance: none;
+      display: block; width: 100%; box-sizing: border-box;
+      margin: 0; font: inherit; color: inherit;
       text-align: left; background: var(--io-bg-canvas);
       border: 1px solid var(--io-border-subtle);
-      border-radius: var(--radius); padding: 10px 10px 10px 12px; cursor: pointer;
+      border-radius: var(--radius);
+      padding: 12px 12px 14px 14px; cursor: pointer;
       transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
       position: relative; overflow: visible;
-      line-height: 1.35;
+      line-height: 1.45;
+      min-height: 0; height: auto;
     }
     .dep-card::before {
       content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent;
@@ -204,7 +211,8 @@
     .dep-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; margin-bottom: 3px; }
     .dep-name {
       font-size: 13.5px; font-weight: 700; letter-spacing: 0.01em; color: var(--io-fg-primary);
-      line-height: 1.35; padding-top: 1px;
+      line-height: 1.45; padding: 2px 0 1px; overflow: visible;
+      display: block;
     }
     .layer-pill {
       font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
@@ -252,17 +260,22 @@
       border: 1px solid color-mix(in srgb, var(--proposed-alt) 40%, transparent);
     }
     .dep-meta {
-      font-size: 11px; color: var(--io-fg-secondary); display: flex; flex-wrap: wrap; gap: 4px 8px;
+      font-size: 11px; color: var(--io-fg-secondary);
+      display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px;
+      line-height: 1.4; margin-top: 4px;
     }
     .dep-meta code {
       font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px;
       color: var(--io-fg-primary);
       background: color-mix(in srgb, var(--io-fg-primary) 6%, transparent);
-      padding: 1px 4px; border-radius: 3px;
+      padding: 2px 5px; border-radius: 3px;
+      line-height: 1.35; max-width: 100%;
+      white-space: normal; word-break: break-word;
     }
     .client-preview {
-      margin-top: 4px; font-size: 10.5px; color: var(--io-fg-muted);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 6px; font-size: 11px; color: var(--io-fg-muted);
+      line-height: 1.4; white-space: normal; overflow: visible;
+      padding-bottom: 1px;
     }
     .client-preview strong { color: var(--io-fg-secondary); font-weight: 600; }
 
