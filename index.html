@@ -21,87 +21,105 @@
       --io-fg-muted: var(--io-text-muted);
       --io-border-subtle: var(--io-border-default);
       --live: var(--io-action-primary);
-      --live-fill: color-mix(in srgb, var(--io-action-primary) 28%, transparent);
-      --live-wash: color-mix(in srgb, var(--io-action-primary) 12%, transparent);
+      --live-fill: color-mix(in srgb, var(--io-action-primary) 14%, transparent);
+      --live-fill-strong: color-mix(in srgb, var(--io-action-primary) 22%, transparent);
+      --live-wash: color-mix(in srgb, var(--io-action-primary) 10%, transparent);
       --proposed: var(--io-category-engagement-accent);
+      --proposed-fill: color-mix(in srgb, var(--io-category-engagement-accent) 12%, transparent);
+      --proposed-fill-strong: color-mix(in srgb, var(--io-category-engagement-accent) 18%, transparent);
       --proposed-alt: var(--io-action-secondary);
-      --proposed-fill: color-mix(in srgb, var(--io-category-engagement-accent) 10%, transparent);
       --indev: var(--io-chart-fill-warning);
+      --indev-fill: color-mix(in srgb, var(--io-chart-fill-warning) 14%, transparent);
       --indev-ink: var(--io-chart-warning);
       --legacy: var(--io-fg-muted);
-      --sidebar-w: 340px;
-      --detail-w: 320px;
-      --radius: 10px;
+      --land: color-mix(in srgb, var(--io-color-warm-5, #ecddc8) 42%, var(--io-bg-canvas));
+      --sidebar-w: 280px;
+      --detail-w: 300px;
+      --radius: 8px;
       --font: var(--io-font-primary, "Barlow Semi Condensed", "Arial Narrow", sans-serif);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
-      height: 100%; overflow: hidden;
+      height: 100%;
+      min-height: 640px;
+      max-height: 100vh;
+      overflow: hidden;
       background: var(--io-bg-canvas);
       color: var(--io-fg-primary);
       font-family: var(--font);
-      font-size: 14px;
-      line-height: 1.45;
+      font-size: 13.5px;
+      line-height: 1.4;
       font-weight: 500;
     }
     .app {
       display: grid;
-      grid-template-columns: var(--sidebar-w) 1fr var(--detail-w);
+      grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--detail-w);
       grid-template-rows: auto 1fr;
       height: 100%;
+      min-height: 640px;
     }
     header {
       grid-column: 1 / -1;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 12px 18px;
+      gap: 14px;
+      padding: 8px 14px;
       background: var(--io-bg-surface);
       border-bottom: 1px solid var(--io-border-subtle);
       z-index: 20;
     }
-    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
     .brand-mark {
-      width: 34px; height: 34px; border-radius: 50%;
+      width: 28px; height: 28px; border-radius: 50%;
       background: var(--io-bg-canvas);
       border: 2px solid var(--live);
       display: grid; place-items: center; flex-shrink: 0;
     }
     .brand-mark span {
-      width: 10px; height: 10px; border-radius: 50%; background: var(--live);
+      width: 8px; height: 8px; border-radius: 50%; background: var(--live);
     }
     .brand-copy h1 {
-      font-size: 18px; font-weight: 700; letter-spacing: 0.01em; line-height: 1.15;
+      font-size: 16px; font-weight: 700; letter-spacing: 0.01em; line-height: 1.15;
       color: var(--io-fg-primary);
     }
     .brand-copy h1 .product { color: var(--live); }
     .brand-copy p {
-      color: var(--io-fg-secondary); font-size: 12px; margin-top: 2px; max-width: 640px; font-weight: 500;
+      color: var(--io-fg-secondary); font-size: 11.5px; margin-top: 1px;
+      max-width: 520px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+    .header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .legend {
-      display: flex; align-items: center; gap: 12px; padding: 6px 10px;
+      display: flex; flex-direction: column; gap: 4px;
+      padding: 5px 10px;
       background: var(--io-bg-canvas);
       border: 1px solid var(--io-border-subtle);
       border-radius: 8px;
-      font-size: 11.5px; color: var(--io-fg-secondary);
+      font-size: 11px; color: var(--io-fg-secondary);
     }
+    .legend-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .legend-item { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+    .legend-rule {
+      font-size: 10.5px; color: var(--io-fg-muted); line-height: 1.3;
+      border-top: 1px solid var(--io-border-subtle); padding-top: 3px;
+    }
     .swatch {
-      width: 12px; height: 12px; border-radius: 3px; display: inline-block;
+      width: 11px; height: 11px; border-radius: 2px; display: inline-block;
       border: 1px solid color-mix(in srgb, var(--io-fg-primary) 18%, transparent);
     }
     .swatch.live { background: var(--live); border-color: var(--live); }
     .swatch.proposed {
-      background: transparent;
-      border: 2px dashed var(--proposed);
+      background: var(--proposed-fill);
+      border: 1.5px dashed var(--proposed);
     }
     .swatch.indev {
-      background: transparent;
-      border: 2px dashed var(--indev);
+      background: var(--indev-fill);
+      border: 1.5px dashed var(--indev);
     }
-    .swatch.legacy { background: color-mix(in srgb, var(--legacy) 35%, transparent); border-style: dotted; }
+    .swatch.legacy {
+      background: color-mix(in srgb, var(--legacy) 28%, transparent);
+      border-style: dotted;
+    }
 
     aside.sidebar {
       background: var(--io-bg-surface);
@@ -111,43 +129,51 @@
     .sidebar-tabs {
       display: grid; grid-template-columns: 1fr 1fr 1fr;
       border-bottom: 1px solid var(--io-border-subtle);
+      flex-shrink: 0;
     }
     .sidebar-tab {
-      font-family: var(--font); font-size: 12px; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase; padding: 11px 8px;
+      font-family: var(--font); font-size: 11.5px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; padding: 10px 6px;
       background: transparent; border: none; color: var(--io-fg-muted); cursor: pointer;
       border-bottom: 2px solid transparent;
     }
     .sidebar-tab:hover { color: var(--io-fg-primary); background: var(--io-bg-canvas); }
+    .sidebar-tab:focus-visible {
+      outline: 2px solid var(--io-border-focus, var(--live));
+      outline-offset: -2px;
+    }
     .sidebar-tab.active-live { color: var(--io-color-genome-green-ink, #00732d); border-bottom-color: var(--live); }
     .sidebar-tab.active-proposed { color: var(--io-color-genome-orange-ink, #9f4a01); border-bottom-color: var(--proposed); }
     .sidebar-tab.active-all { color: var(--io-fg-primary); border-bottom-color: var(--io-border-strong); }
     .sidebar-head {
-      padding: 12px 14px 8px; border-bottom: 1px solid var(--io-border-subtle);
+      padding: 8px 12px 6px; border-bottom: 1px solid var(--io-border-subtle);
       display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+      flex-shrink: 0;
     }
     .sidebar-head h2 {
-      font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
       text-transform: uppercase; color: var(--io-fg-muted);
     }
-    .sidebar-head .count { color: var(--live); font-weight: 700; }
+    .sidebar-head .count { color: var(--live); font-weight: 700; font-size: 12px; }
     .sidebar-note {
-      padding: 8px 14px; font-size: 11.5px; color: var(--io-fg-secondary); line-height: 1.4;
+      padding: 7px 12px; font-size: 11px; color: var(--io-fg-secondary); line-height: 1.35;
       border-bottom: 1px solid var(--io-border-subtle); background: var(--io-bg-canvas);
+      flex-shrink: 0;
     }
     .deployments {
-      flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 7px;
+      flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 5px;
     }
     .section-label {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--io-fg-muted); padding: 8px 4px 2px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--io-fg-muted); padding: 6px 4px 2px;
     }
     .dep-card {
       text-align: left; background: var(--io-bg-canvas);
       border: 1px solid var(--io-border-subtle);
-      border-radius: var(--radius); padding: 11px 12px; cursor: pointer;
-      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
-      position: relative; overflow: hidden;
+      border-radius: var(--radius); padding: 10px 10px 10px 12px; cursor: pointer;
+      transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+      position: relative; overflow: visible;
+      line-height: 1.35;
     }
     .dep-card::before {
       content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent;
@@ -159,26 +185,30 @@
     .dep-card.selected.layer-live {
       border-color: var(--live);
       background: var(--live-wash);
-      box-shadow: 0 0 0 1px color-mix(in srgb, var(--live) 35%, transparent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--live) 30%, transparent);
     }
-    .dep-card.selected.layer-live::before { background: var(--live); }
+    .dep-card.selected.layer-live::before { background: var(--live); width: 4px; }
     .dep-card.selected.layer-proposed {
       border-color: var(--proposed);
       background: var(--proposed-fill);
-      box-shadow: 0 0 0 1px color-mix(in srgb, var(--proposed) 35%, transparent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--proposed) 30%, transparent);
     }
-    .dep-card.selected.layer-proposed::before { background: var(--proposed); }
+    .dep-card.selected.layer-proposed::before { background: var(--proposed); width: 4px; }
     .dep-card.selected.layer-indev {
       border-color: var(--indev);
-      background: color-mix(in srgb, var(--indev) 10%, transparent);
+      background: var(--indev-fill);
     }
-    .dep-card.selected.layer-indev::before { background: var(--indev); }
-    .dep-card.dimmed { opacity: 0.4; }
-    .dep-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
-    .dep-name { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; color: var(--io-fg-primary); }
+    .dep-card.selected.layer-indev::before { background: var(--indev); width: 4px; }
+    .dep-card.selected.layer-legacy::before { background: var(--legacy); width: 4px; }
+    .dep-card.dimmed { opacity: 0.45; }
+    .dep-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; margin-bottom: 3px; }
+    .dep-name {
+      font-size: 13.5px; font-weight: 700; letter-spacing: 0.01em; color: var(--io-fg-primary);
+      line-height: 1.35; padding-top: 1px;
+    }
     .layer-pill {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
-      padding: 2px 6px; border-radius: 999px; flex-shrink: 0;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 3px 7px; border-radius: 999px; flex-shrink: 0; line-height: 1.25;
     }
     .layer-pill.live {
       background: var(--live-wash); color: var(--io-color-genome-green-ink, #00732d);
@@ -189,7 +219,7 @@
       border: 1px solid color-mix(in srgb, var(--proposed) 45%, transparent);
     }
     .layer-pill.indev {
-      background: color-mix(in srgb, var(--indev) 14%, transparent);
+      background: var(--indev-fill);
       color: var(--indev-ink);
       border: 1px solid color-mix(in srgb, var(--indev) 45%, transparent);
     }
@@ -199,15 +229,15 @@
       border: 1px solid color-mix(in srgb, var(--legacy) 35%, transparent);
     }
     .badge {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-      padding: 3px 7px; border-radius: 999px; flex-shrink: 0;
+      font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+      padding: 2px 6px; border-radius: 999px; flex-shrink: 0;
     }
     .badge.live-status, .badge.ready {
       background: var(--live-wash); color: var(--io-color-genome-green-ink, #00732d);
       border: 1px solid color-mix(in srgb, var(--live) 40%, transparent);
     }
     .badge.indev {
-      background: color-mix(in srgb, var(--indev) 14%, transparent);
+      background: var(--indev-fill);
       color: var(--indev-ink);
       border: 1px solid color-mix(in srgb, var(--indev) 45%, transparent);
     }
@@ -222,16 +252,16 @@
       border: 1px solid color-mix(in srgb, var(--proposed-alt) 40%, transparent);
     }
     .dep-meta {
-      font-size: 11.5px; color: var(--io-fg-secondary); display: flex; flex-wrap: wrap; gap: 5px 9px;
+      font-size: 11px; color: var(--io-fg-secondary); display: flex; flex-wrap: wrap; gap: 4px 8px;
     }
     .dep-meta code {
-      font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px;
       color: var(--io-fg-primary);
       background: color-mix(in srgb, var(--io-fg-primary) 6%, transparent);
-      padding: 1px 5px; border-radius: 4px;
+      padding: 1px 4px; border-radius: 3px;
     }
     .client-preview {
-      margin-top: 6px; font-size: 11px; color: var(--io-fg-muted);
+      margin-top: 4px; font-size: 10.5px; color: var(--io-fg-muted);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .client-preview strong { color: var(--io-fg-secondary); font-weight: 600; }
@@ -239,7 +269,7 @@
     .map-wrap {
       position: relative; overflow: hidden;
       background: var(--io-bg-canvas);
-      border-left: 1px solid transparent;
+      min-height: 0;
     }
     #map-svg {
       width: 100%; height: 100%; display: block;
@@ -247,67 +277,120 @@
       cursor: grab;
     }
     #map-svg:active { cursor: grabbing; }
+
     .country {
-      fill: color-mix(in srgb, var(--io-color-warm-5, #ecddc8) 55%, var(--io-bg-canvas));
-      stroke: color-mix(in srgb, var(--io-fg-primary) 20%, transparent);
-      stroke-width: 0.4;
+      fill: var(--land);
+      stroke: color-mix(in srgb, var(--io-fg-primary) 16%, transparent);
+      stroke-width: 0.6;
       vector-effect: non-scaling-stroke;
-      transition: fill 0.15s, stroke 0.15s, stroke-width 0.15s;
+      transition: fill 0.15s, stroke 0.15s, opacity 0.15s;
     }
     .country.live-cov {
       fill: var(--live-fill);
-      stroke: color-mix(in srgb, var(--live) 55%, var(--io-fg-primary));
-      stroke-width: 0.55;
+      stroke: color-mix(in srgb, var(--live) 50%, var(--io-fg-primary));
+      stroke-width: 0.7;
+      stroke-dasharray: none;
     }
     .country.proposed-cov {
       fill: var(--proposed-fill);
       stroke: var(--proposed);
-      stroke-width: 1.1;
-      stroke-dasharray: 4 2.5;
+      stroke-width: 1;
+      stroke-dasharray: 3.5 2.5;
     }
     .country.overlap-cov {
       fill: var(--live-fill);
       stroke: var(--proposed);
-      stroke-width: 1.25;
-      stroke-dasharray: 4 2.5;
+      stroke-width: 1.1;
+      stroke-dasharray: 3.5 2.5;
     }
     .country.indev-cov {
-      fill: color-mix(in srgb, var(--indev) 16%, transparent);
+      fill: var(--indev-fill);
       stroke: var(--indev);
       stroke-width: 0.9;
-      stroke-dasharray: 3 2;
+      stroke-dasharray: 2.5 2;
     }
-    .country.hover-cov {
+    .country.live-muted {
+      fill: color-mix(in srgb, var(--live) 6%, transparent);
+      stroke: color-mix(in srgb, var(--live) 28%, transparent);
+      stroke-width: 0.55;
+      stroke-dasharray: none;
+      opacity: 0.55;
+    }
+    .country.selected-cov {
+      fill: var(--live-fill-strong);
       stroke: var(--io-fg-primary);
-      stroke-width: 1.2;
+      stroke-width: 2;
+      stroke-dasharray: none;
+      opacity: 1;
+    }
+    .country.selected-cov.proposed-sel {
+      fill: var(--proposed-fill-strong);
+      stroke: var(--proposed);
+      stroke-width: 2;
       stroke-dasharray: none;
     }
-    .pin-group { cursor: pointer; }
-    .pin-halo {
-      fill: none; stroke-width: 1.5; opacity: 0.45;
+    .country.selected-cov.indev-sel {
+      fill: color-mix(in srgb, var(--indev) 22%, transparent);
+      stroke: var(--indev-ink);
+      stroke-width: 2;
+      stroke-dasharray: none;
     }
+    .country.dim-cov { opacity: 0.4; }
+    .country.hover-cov {
+      stroke: var(--io-fg-primary);
+      stroke-width: 1.35;
+      stroke-dasharray: none;
+    }
+
+    .pin-group { cursor: pointer; }
+    .pin-glow {
+      fill: currentColor; opacity: 0; pointer-events: none;
+    }
+    .pin-group.is-selected .pin-glow { opacity: 0.12; }
     .pin-core {
-      stroke: var(--io-bg-surface); stroke-width: 1.5;
+      stroke: #ffffff;
+      stroke-width: 1.75;
+      vector-effect: non-scaling-stroke;
+    }
+    .pin-group.is-selected .pin-core { stroke-width: 2.25; }
+    .pin-label-bg {
+      fill: color-mix(in srgb, var(--io-bg-canvas) 92%, transparent);
+      stroke: color-mix(in srgb, var(--io-fg-primary) 10%, transparent);
+      stroke-width: 0.75;
+      rx: 3; ry: 3;
+      pointer-events: none;
     }
     .pin-label {
-      font-family: var(--font); font-size: 10px; font-weight: 700;
-      fill: var(--io-fg-primary); pointer-events: none;
-      paint-order: stroke; stroke: var(--io-bg-canvas); stroke-width: 3px;
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 600;
+      fill: var(--io-fg-primary);
+      pointer-events: none;
     }
+    .pin-group.is-selected .pin-label { font-weight: 700; font-size: 12px; }
+    .pin-connector {
+      stroke: color-mix(in srgb, var(--io-fg-primary) 28%, transparent);
+      stroke-width: 0.75;
+      fill: none;
+      pointer-events: none;
+    }
+    .pin-group.is-secondary .pin-core { stroke-width: 1.25; }
+    .pin-group.is-secondary .pin-label { font-size: 10px; font-weight: 600; fill: var(--io-fg-secondary); }
+
     .map-toolbar {
-      position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 5;
+      position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 5;
     }
     .map-btn {
-      font-family: var(--font); font-size: 12px; font-weight: 600;
+      font-family: var(--font); font-size: 11.5px; font-weight: 600;
       border: 1px solid var(--io-border-subtle); background: var(--io-bg-surface);
-      color: var(--io-fg-primary); padding: 6px 10px; border-radius: 8px; cursor: pointer;
+      color: var(--io-fg-primary); padding: 6px 11px; border-radius: 7px; cursor: pointer;
+      box-shadow: 0 1px 2px color-mix(in srgb, var(--io-fg-primary) 6%, transparent);
     }
     .map-btn:hover { border-color: var(--live); background: var(--live-wash); }
-    .map-hint {
-      position: absolute; left: 12px; bottom: 12px; z-index: 5;
-      background: var(--io-bg-surface); border: 1px solid var(--io-border-subtle);
-      border-radius: 8px; padding: 8px 10px; font-size: 11px; color: var(--io-fg-secondary);
-      max-width: 280px; line-height: 1.35;
+    .map-footer {
+      position: absolute; left: 10px; bottom: 8px; z-index: 5;
+      font-size: 10.5px; color: var(--io-fg-muted); pointer-events: none;
+      letter-spacing: 0.01em;
     }
     .map-loading {
       position: absolute; inset: 0; display: grid; place-items: center;
@@ -320,74 +403,90 @@
       border-left: 1px solid var(--io-border-subtle);
       display: flex; flex-direction: column; overflow: hidden; z-index: 10;
     }
-    .detail-scroll { flex: 1; overflow-y: auto; padding: 14px; }
+    .detail-scroll { flex: 1; overflow-y: auto; padding: 12px; }
     .empty-state {
-      color: var(--io-fg-muted); font-size: 13px; line-height: 1.5; padding: 8px 2px;
+      color: var(--io-fg-muted); font-size: 12.5px; line-height: 1.45; padding: 6px 2px;
     }
     .detail-title {
-      font-size: 20px; font-weight: 700; letter-spacing: 0.01em; margin-bottom: 4px;
+      font-size: 18px; font-weight: 700; letter-spacing: 0.01em; margin-bottom: 2px;
       color: var(--io-fg-primary);
     }
     .detail-sub {
-      font-size: 12px; color: var(--io-fg-secondary); margin-bottom: 12px;
+      font-size: 11.5px; color: var(--io-fg-secondary); margin-bottom: 10px;
     }
-    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
     .kv {
-      display: grid; grid-template-columns: 96px 1fr; gap: 4px 10px;
-      font-size: 12.5px; margin-bottom: 12px;
+      display: grid; grid-template-columns: 84px 1fr; gap: 3px 8px;
+      font-size: 12px; margin-bottom: 10px;
     }
     .kv dt { color: var(--io-fg-muted); font-weight: 600; }
     .kv dd { color: var(--io-fg-primary); font-weight: 500; }
     .kv dd code {
-      font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px;
       background: var(--io-bg-canvas); border: 1px solid var(--io-border-subtle);
-      padding: 1px 5px; border-radius: 4px;
+      padding: 1px 4px; border-radius: 3px;
     }
-    .block { margin-top: 14px; }
+    .block { margin-top: 12px; }
     .block h3 {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
-      color: var(--io-fg-muted); margin-bottom: 8px;
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--io-fg-muted); margin-bottom: 6px;
     }
     .client-card {
-      border: 1px solid var(--io-border-subtle); border-radius: 8px;
-      padding: 9px 10px; margin-bottom: 7px; background: var(--io-bg-canvas);
+      border: 1px solid var(--io-border-subtle); border-radius: 7px;
+      padding: 7px 9px; margin-bottom: 6px; background: var(--io-bg-canvas);
     }
-    .client-card .cn { font-weight: 700; font-size: 13.5px; color: var(--io-fg-primary); }
-    .client-card .cp { font-size: 11.5px; color: var(--io-fg-secondary); margin-top: 2px; }
-    .client-card .cnote { font-size: 11px; color: var(--io-fg-muted); margin-top: 3px; }
-    .country-list {
-      display: flex; flex-wrap: wrap; gap: 4px;
-    }
+    .client-card .cn { font-weight: 700; font-size: 13px; color: var(--io-fg-primary); }
+    .client-card .cp { font-size: 11px; color: var(--io-fg-secondary); margin-top: 2px; }
+    .client-card .cnote { font-size: 10.5px; color: var(--io-fg-muted); margin-top: 2px; }
+    .country-list { display: flex; flex-wrap: wrap; gap: 4px; }
     .country-tag {
-      font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 999px;
+      font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 999px;
       background: var(--io-bg-canvas); border: 1px solid var(--io-border-subtle);
       color: var(--io-fg-secondary);
     }
     .compute-callout {
       background: color-mix(in srgb, var(--proposed-alt) 8%, var(--io-bg-canvas));
-      border: 1px solid color-mix(in srgb, var(--proposed-alt) 30%, transparent);
-      border-radius: 8px; padding: 10px 11px; font-size: 12px; color: var(--io-fg-secondary);
-      line-height: 1.45;
+      border: 1px solid color-mix(in srgb, var(--proposed-alt) 28%, transparent);
+      border-radius: 7px; padding: 8px 9px; font-size: 11.5px; color: var(--io-fg-secondary);
+      line-height: 1.4;
     }
     .compute-callout strong { color: var(--io-fg-primary); font-weight: 700; }
     .notes {
-      font-size: 12.5px; color: var(--io-fg-secondary); line-height: 1.5;
-      border-top: 1px solid var(--io-border-subtle); padding-top: 12px; margin-top: 14px;
+      font-size: 12px; color: var(--io-fg-secondary); line-height: 1.45;
+      border-top: 1px solid var(--io-border-subtle); padding-top: 10px; margin-top: 12px;
     }
-    .source {
-      margin-top: 10px; font-size: 10.5px; color: var(--io-fg-muted);
+    .source { margin-top: 8px; font-size: 10px; color: var(--io-fg-muted); }
+    .landing-note {
+      margin-top: 8px; padding: 7px 9px; border-radius: 7px;
+      background: var(--live-wash);
+      border: 1px solid color-mix(in srgb, var(--live) 28%, transparent);
+      font-size: 11.5px; color: var(--io-fg-secondary); line-height: 1.4;
     }
+    .landing-note strong { color: var(--io-color-genome-green-ink, #00732d); }
     .tooltip {
       position: absolute; pointer-events: none; z-index: 30;
       background: var(--io-bg-surface); border: 1px solid var(--io-border-subtle);
-      border-radius: 8px; padding: 7px 9px; font-size: 11.5px;
-      color: var(--io-fg-primary); box-shadow: 0 6px 20px color-mix(in srgb, var(--io-fg-primary) 12%, transparent);
+      border-radius: 7px; padding: 6px 8px; font-size: 11px;
+      color: var(--io-fg-primary); box-shadow: 0 6px 18px color-mix(in srgb, var(--io-fg-primary) 10%, transparent);
       max-width: 220px; display: none;
     }
 
     @media (max-width: 1100px) {
-      .app { grid-template-columns: 280px 1fr; grid-template-rows: auto 1fr auto; }
-      aside.detail { grid-column: 1 / -1; max-height: 280px; border-left: none; border-top: 1px solid var(--io-border-subtle); }
+      .app {
+        grid-template-columns: 260px minmax(0, 1fr);
+        grid-template-rows: auto 1fr minmax(200px, 32vh);
+      }
+      aside.detail {
+        grid-column: 1 / -1;
+        border-left: none;
+        border-top: 1px solid var(--io-border-subtle);
+      }
+      .brand-copy p { max-width: 280px; }
+    }
+    @media (max-width: 820px) {
+      .app { grid-template-columns: 1fr; grid-template-rows: auto auto minmax(360px, 1fr) minmax(180px, 30vh); }
+      aside.sidebar { max-height: 220px; border-right: none; border-bottom: 1px solid var(--io-border-subtle); }
+      .legend { display: none; }
     }
   </style>
 </head>
@@ -398,22 +497,24 @@
         <div class="brand-mark" aria-hidden="true"><span></span></div>
         <div class="brand-copy">
           <h1><span class="product">IntentOne</span> Mid-Market coverage</h1>
-          <p>Live deployments (green) vs proposed mid-market P0 self-signup regions (coral outline). Select a pin or row for clients, products, and NexusOne compute path.</p>
+          <p>Green = live hubs. Coral dashed = proposed P0 self-signup. Amber dashed = in development. Click a hub to see its country catchment.</p>
         </div>
       </div>
       <div class="header-actions">
         <div class="legend" aria-label="Legend">
-          <span class="legend-item"><span class="swatch live"></span> Live</span>
-          <span class="legend-item"><span class="swatch indev"></span> In development</span>
-          <span class="legend-item"><span class="swatch proposed"></span> Proposed P0</span>
-          <span class="legend-item"><span class="swatch legacy"></span> Legacy</span>
-          <span class="legend-item" style="max-width:280px;white-space:normal;line-height:1.3">Hubs serve a catchment, not one country. Example: São Paulo covers most of South America.</span>
+          <div class="legend-row">
+            <span class="legend-item"><span class="swatch live"></span> Live</span>
+            <span class="legend-item"><span class="swatch indev"></span> In development</span>
+            <span class="legend-item"><span class="swatch proposed"></span> Proposed P0</span>
+            <span class="legend-item"><span class="swatch legacy"></span> Legacy</span>
+          </div>
+          <div class="legend-rule">Hubs serve a catchment, not one country. Example: São Paulo covers most of South America.</div>
         </div>
       </div>
     </header>
 
     <aside class="sidebar">
-      <div class="sidebar-tabs" role="tablist">
+      <div class="sidebar-tabs" role="tablist" aria-label="Coverage filter">
         <button class="sidebar-tab" data-filter="live" role="tab" aria-selected="false">Live</button>
         <button class="sidebar-tab" data-filter="proposed" role="tab" aria-selected="false">Proposed</button>
         <button class="sidebar-tab active-all" data-filter="all" role="tab" aria-selected="true">All</button>
@@ -422,8 +523,8 @@
         <h2>Deployments</h2>
         <span class="count" id="list-count">0</span>
       </div>
-      <div class="sidebar-note">
-        Hubs serve a catchment, not one country. Example: São Paulo covers most of South America. Overlap regions show green fill with a dashed coral proposed edge. NexusOne soft-compute is portable to any deployment including bare metal.
+      <div class="sidebar-note" id="filter-note">
+        Showing all layers. Use Live or Proposed to focus. All and Reset view always restore the full overview.
       </div>
       <div class="deployments" id="deployments" role="listbox" aria-label="Deployments"></div>
     </aside>
@@ -432,26 +533,22 @@
       <div class="map-loading" id="map-loading">Loading world outlines…</div>
       <svg id="map-svg" role="img" aria-label="World coverage map"></svg>
       <div class="map-toolbar">
-        <button type="button" class="map-btn" id="btn-reset">Reset view</button>
+        <button type="button" class="map-btn" id="btn-reset" title="Clear selection, show All layers, reset map">Reset view</button>
       </div>
-      <div class="map-hint">Cream canvas + country shapes only (no tile basemap). Pan and zoom freely.</div>
+      <div class="map-footer">Country fills = catchment. No range rings.</div>
       <div class="tooltip" id="tooltip"></div>
     </div>
 
     <aside class="detail">
       <div class="detail-scroll" id="detail">
-        <p class="empty-state">Select a live deployment to see coverage and known clients, or a proposed P0 region for planned mid-market self-signup coverage.</p>
+        <p class="empty-state">Select a hub on the map or in the list to see catchment countries, clients, and compute path. Use All or Reset view anytime to return to the full overview.</p>
       </div>
     </aside>
   </div>
 
   <script>
 (function () {
-  const LIVE = "var(--io-action-primary)";
-  const PROPOSED = "var(--io-category-engagement-accent)";
-  const INDEV = "var(--io-chart-fill-warning)";
 
-  /* ISO 3166-1 numeric (world-atlas id) -> alpha-2 */
   const NUM_TO_ISO2 = {
     "004":"AF","008":"AL","012":"DZ","020":"AD","024":"AO","028":"AG","032":"AR","036":"AU","040":"AT","048":"BH",
     "050":"BD","051":"AM","056":"BE","064":"BT","068":"BO","070":"BA","072":"BW","076":"BR","084":"BZ","090":"SB",
@@ -746,7 +843,7 @@
     {
       id: "p0-eu-frankfurt",
       layer: "proposed",
-      name: "P0 EU Frankfurt",
+      name: "P0 Frankfurt (DACH)",
       shortName: "eu-central-1 self-signup",
       cloud: "AWS",
       regionCode: "eu-central-1",
@@ -755,7 +852,7 @@
       computePath: "Databricks preferred · NexusOne portable fallback",
       llmPath: "Amazon Bedrock · Claude",
       status: "Ready",
-      hub: { lat: 50.11, lng: 8.68, label: "Frankfurt" },
+      hub: { lat: 50.05, lng: 8.75, label: "Frankfurt P0" },
       catchmentLabel: "DACH + Central/Eastern EU hub",
       countries: ["DE","AT","CH","PL","CZ","SK","HU","RO","BG","SI","HR","EE","LV","LT","UA","MD","RS","BA","ME","MK","AL"],
       countryNames: ["Germany","Austria","Switzerland","Poland","Czechia","Slovakia","Hungary","Romania","Bulgaria","Slovenia","Croatia","Estonia","Latvia","Lithuania","Ukraine","Moldova","Serbia","Bosnia and Herzegovina","Montenegro","North Macedonia","Albania"],
@@ -829,13 +926,37 @@
     }
   ];
 
+
   const byId = Object.fromEntries(DEPLOYMENTS.map(d => [d.id, d]));
   let selectedId = null;
   let listFilter = "all";
   let countryPaths = null;
+  let countryFeatures = [];
   let projection = null;
   let pathGen = null;
   let zoomBehavior = null;
+  let zoomK = 1;
+  let gRoot = null;
+
+  /* Short map labels + offsets so Dublin / Frankfurt and nearby hubs stay readable */
+  const MAP_LABEL = {
+    "live-ihq-eu": { text: "Dublin", dx: -46, dy: -18 },
+    "live-ihq-za": { text: "Johannesburg", dx: 18, dy: 24 },
+    "live-ihq-azure-za": { text: "Azure SA", dx: -70, dy: -20 },
+    "live-ihq-cbl": { text: "Nassau", dx: 12, dy: -14 },
+    "live-ihq-vzw": { text: "US (VZ)", dx: -52, dy: -14 },
+    "live-mtn-azure-za": { text: "MTN Azure", dx: 20, dy: -28 },
+    "legacy-anagog": { text: "Anagog US", dx: -8, dy: 20 },
+    "indev-ihq-us-east": { text: "N. Virginia", dx: 14, dy: 22 },
+    "indev-ihq-in": { text: "Mumbai", dx: 12, dy: -14 },
+    "indev-lagos-bm": { text: "Lagos", dx: 12, dy: -14 },
+    "indev-vivo-br": { text: "São Paulo", dx: 14, dy: 22 },
+    "p0-eu-ireland": { text: "Dublin P0", dx: -52, dy: 20 },
+    "p0-eu-frankfurt": { text: "Frankfurt", dx: 14, dy: -16 },
+    "p0-us-east": { text: "Virginia P0", dx: 16, dy: -20 },
+    "p0-brazil-latam": { text: "São Paulo P0", dx: -78, dy: -18 },
+    "p0-south-africa": { text: "JHB Azure", dx: -78, dy: 28 }
+  };
 
   function layerGroup(d) {
     if (d.layer === "proposed") return "proposed";
@@ -847,48 +968,81 @@
   function statusClass(status) {
     const s = (status || "").toLowerCase();
     if (s === "legacy") return "legacy";
-    if (s === "thin" || s === "in build") return s === "thin" ? "thin" : "indev";
-    if (s.includes("develop")) return "indev";
-    if (s === "live" || s === "ready") return s === "live" ? "live-status" : "ready";
+    if (s === "thin") return "thin";
+    if (s === "in build" || s.includes("develop")) return "indev";
+    if (s === "live") return "live-status";
+    if (s === "ready") return "ready";
     return "ready";
   }
 
   function listLayerKey(d) {
     if (listFilter === "all") return true;
-    if (listFilter === "live") return d.layer === "live" || d.layer === "indev" || d.layer === "legacy";
+    if (listFilter === "live") return d.layer === "live" || d.layer === "legacy";
     if (listFilter === "proposed") return d.layer === "proposed";
     return true;
   }
 
+  /* Map visibility: Live = live (+legacy muted); Proposed = proposed + live as muted context; All = everything */
   function visibleForMap(d) {
     if (listFilter === "all") return true;
-    if (listFilter === "live") return d.layer === "live" || d.layer === "indev" || d.layer === "legacy";
-    if (listFilter === "proposed") return d.layer === "proposed";
+    if (listFilter === "live") return d.layer === "live" || d.layer === "legacy";
+    if (listFilter === "proposed") return d.layer === "proposed" || d.layer === "live";
+    return true;
+  }
+
+  function isPrimaryPin(d) {
+    if (listFilter === "proposed" && d.layer === "live") return false;
     return true;
   }
 
   function coverageForIso(iso2) {
     const owners = DEPLOYMENTS.filter(d => d.countries.includes(iso2) && visibleForMap(d));
+    if (!owners.length) return { cls: "", ownerIds: [] };
+
     const hasLive = owners.some(d => d.layer === "live");
     const hasProposed = owners.some(d => d.layer === "proposed");
     const hasIndev = owners.some(d => d.layer === "indev");
-    if (hasLive && hasProposed) return "overlap-cov";
-    if (hasLive) return "live-cov";
-    if (hasProposed) return "proposed-cov";
-    if (hasIndev) return "indev-cov";
-    return "";
+
+    let cls = "";
+    if (listFilter === "proposed") {
+      if (hasProposed && hasLive) cls = "overlap-cov";
+      else if (hasProposed) cls = "proposed-cov";
+      else if (hasLive) cls = "live-muted";
+    } else if (listFilter === "live") {
+      if (hasLive) cls = "live-cov";
+      else if (owners.some(d => d.layer === "legacy")) cls = "";
+    } else {
+      if (hasLive && hasProposed) cls = "overlap-cov";
+      else if (hasLive) cls = "live-cov";
+      else if (hasProposed) cls = "proposed-cov";
+      else if (hasIndev) cls = "indev-cov";
+    }
+
+    return { cls, ownerIds: owners.map(o => o.id) };
+  }
+
+  function filterNoteText() {
+    if (listFilter === "live") {
+      return "Live footprint only (in-dev and proposed hidden). Frankfurt appears as a landing under Hosted EU. All restores every layer.";
+    }
+    if (listFilter === "proposed") {
+      return "Proposed P0 catchments. Live hubs shown muted for context. P0 Frankfurt (DACH) is included here and on All.";
+    }
+    return "All layers. Green fill = live catchment. Coral dashed edge = proposed. Amber dashed = in development.";
   }
 
   function renderList() {
     const box = document.getElementById("deployments");
+    const note = document.getElementById("filter-note");
+    if (note) note.textContent = filterNoteText();
     const items = DEPLOYMENTS.filter(listLayerKey);
     document.getElementById("list-count").textContent = String(items.length);
 
     const groups = [
       { key: "live", label: "Live", filter: d => d.layer === "live" },
+      { key: "proposed", label: "Proposed P0", filter: d => d.layer === "proposed" },
       { key: "indev", label: "In development", filter: d => d.layer === "indev" },
-      { key: "legacy", label: "Legacy", filter: d => d.layer === "legacy" },
-      { key: "proposed", label: "Proposed P0", filter: d => d.layer === "proposed" }
+      { key: "legacy", label: "Legacy", filter: d => d.layer === "legacy" }
     ];
 
     let html = "";
@@ -896,6 +1050,14 @@
       const rows = items.filter(g.filter);
       if (!rows.length) return;
       html += `<div class="section-label">${g.label}</div>`;
+      const order = {
+        "p0-eu-ireland": 0,
+        "p0-eu-frankfurt": 1,
+        "p0-us-east": 2,
+        "p0-brazil-latam": 3,
+        "p0-south-africa": 4
+      };
+      rows.sort((a, b) => (order[a.id] ?? 50) - (order[b.id] ?? 50) || a.name.localeCompare(b.name));
       rows.forEach(d => {
         const lg = layerGroup(d);
         const selected = selectedId === d.id;
@@ -927,7 +1089,7 @@
   function renderDetail(d) {
     const el = document.getElementById("detail");
     if (!d) {
-      el.innerHTML = `<p class="empty-state">Select a live deployment to see coverage and known clients, or a proposed P0 region for planned mid-market self-signup coverage.</p>`;
+      el.innerHTML = `<p class="empty-state">Select a hub on the map or in the list to see catchment countries, clients, and compute path. Use All or Reset view anytime to return to the full overview.</p>`;
       return;
     }
     const lg = layerGroup(d);
@@ -941,6 +1103,9 @@
       : `<p class="empty-state" style="padding:0">No named customers on this card yet (typical for proposed P0 self-signup).</p>`;
 
     const countries = (d.countryNames || []).map(n => `<span class="country-tag">${n}</span>`).join("");
+    const landing = (d.secondaryHubs && d.secondaryHubs.length)
+      ? `<div class="landing-note"><strong>Landing path:</strong> ${d.secondaryHubs.map(h => h.label).join(", ")}. This is a live routing path under ${d.hub.label}, not the Proposed P0 Frankfurt self-signup region.</div>`
+      : "";
 
     el.innerHTML = `
       <div class="chip-row">
@@ -957,6 +1122,7 @@
         <dt>Hub</dt><dd>${d.hub.label}</dd>
         ${d.catchmentLabel ? `<dt>Catchment</dt><dd>${d.catchmentLabel}</dd>` : ""}
       </dl>
+      ${landing}
       <div class="block">
         <h3>Clients · products</h3>
         ${clientsHtml}
@@ -978,32 +1144,63 @@
     `;
   }
 
+  function zoomToCatchment(d) {
+    const svg = d3.select("#map-svg");
+    const node = svg.node();
+    if (!node || !projection || !pathGen || !zoomBehavior) return;
+    const w = node.clientWidth, h = node.clientHeight;
+    const feats = countryFeatures.filter(feat => {
+      const id = String(feat.id).padStart(3, "0");
+      const iso = NUM_TO_ISO2[id] || "";
+      return iso && d.countries.includes(iso);
+    });
+    let t;
+    if (feats.length) {
+      const bounds = pathGen.bounds({ type: "FeatureCollection", features: feats });
+      const pad = 40;
+      const dx = Math.max(bounds[1][0] - bounds[0][0], 24);
+      const dy = Math.max(bounds[1][1] - bounds[0][1], 24);
+      const x = (bounds[0][0] + bounds[1][0]) / 2;
+      const y = (bounds[0][1] + bounds[1][1]) / 2;
+      const scale = Math.max(1.05, Math.min(2.6, 0.92 / Math.max(dx / Math.max(w - pad * 2, 1), dy / Math.max(h - pad * 2, 1))));
+      t = d3.zoomIdentity.translate(w / 2 - x * scale, h / 2 - y * scale).scale(scale);
+    } else {
+      const p = projection([d.hub.lng, d.hub.lat]);
+      if (!p) return;
+      const scale = Math.min(2.6, 2.4);
+      t = d3.zoomIdentity.translate(w / 2 - p[0] * scale, h / 2 - p[1] * scale).scale(scale);
+    }
+    svg.transition().duration(480).call(zoomBehavior.transform, t);
+  }
+
   function selectDeployment(id) {
+    /* Selection never changes the filter. Tabs stay fully usable. */
     selectedId = id;
     const d = byId[id];
     renderList();
     renderDetail(d);
     paintCountries();
     paintPins();
-    if (d && projection) {
-      const [x, y] = projection([d.hub.lng, d.hub.lat]);
-      // gentle focus via zoom transform toward hub
-      const svg = d3.select("#map-svg");
-      const node = svg.node();
-      const w = node.clientWidth, h = node.clientHeight;
-      const scale = 2.2;
-      const t = d3.zoomIdentity.translate(w / 2 - x * scale, h / 2 - y * scale).scale(scale);
-      svg.transition().duration(450).call(zoomBehavior.transform, t);
-    }
+    if (d) zoomToCatchment(d);
   }
 
   function paintCountries() {
     if (!countryPaths) return;
+    const selected = selectedId ? byId[selectedId] : null;
     countryPaths.attr("class", function (feat) {
       const id = String(feat.id).padStart(3, "0");
       const iso = NUM_TO_ISO2[id] || NUM_TO_ISO2[feat.id] || "";
-      const cov = iso ? coverageForIso(iso) : "";
-      return "country" + (cov ? " " + cov : "");
+      if (!iso) return "country";
+      const { cls, ownerIds } = coverageForIso(iso);
+      let out = "country" + (cls ? " " + cls : "");
+      if (selected && selected.countries.includes(iso)) {
+        out += " selected-cov";
+        if (selected.layer === "proposed") out += " proposed-sel";
+        else if (selected.layer === "indev") out += " indev-sel";
+      } else if (selected && cls && !ownerIds.includes(selected.id)) {
+        out += " dim-cov";
+      }
+      return out;
     });
   }
 
@@ -1014,44 +1211,236 @@
     return "#00d058";
   }
 
-  function pinRadius(d) {
-    return selectedId === d.id ? 7.5 : 5.5;
+  function pinRadius(d, secondary) {
+    if (secondary) return selectedId === d.parentId ? 4.5 : 3.5;
+    return selectedId === d.id ? 6.5 : 5;
+  }
+
+  function mapLabelFor(d) {
+    const meta = MAP_LABEL[d.id];
+    if (meta) return meta;
+    const raw = (d.hub && d.hub.label) || d.name;
+    const text = String(raw).replace(/\s+P0$/, "").replace(/\s+landing$/i, "");
+    return { text, dx: 12, dy: -14 };
+  }
+
+  function buildPinItems() {
+    const items = [];
+    DEPLOYMENTS.filter(visibleForMap).forEach(d => {
+      if (!isPrimaryPin(d)) return;
+      /* On Live tab, skip proposed-only noise (already filtered). Deduplicate nearby proposed/live twins on All by showing both with offset labels. */
+      items.push({
+        key: d.id,
+        id: d.id,
+        parentId: d.id,
+        deployment: d,
+        layer: d.layer,
+        lat: d.hub.lat,
+        lng: d.hub.lng,
+        secondary: false,
+        label: mapLabelFor(d)
+      });
+      /* Secondary landings only on Live (All already has P0 Frankfurt pin) */
+      if (listFilter === "live" && d.secondaryHubs && d.secondaryHubs.length) {
+        d.secondaryHubs.forEach((h, i) => {
+          const labelText = (h.label || "Landing").replace(/\s+landing$/i, "");
+          items.push({
+            key: d.id + "::sec::" + i,
+            id: d.id + "::sec::" + i,
+            parentId: d.id,
+            deployment: d,
+            layer: d.layer,
+            lat: h.lat,
+            lng: h.lng,
+            secondary: true,
+            label: { text: labelText, dx: 12, dy: -12 }
+          });
+        });
+      }
+    });
+    /* On All + Proposed, ensure p0-eu-frankfurt is present (visibleForMap already includes it). */
+    return items;
+  }
+
+
+  function applyPinScreenScale() {
+    const g = d3.select("#pins");
+    if (g.empty() || !projection) return;
+    const s = 1 / Math.max(zoomK, 0.01);
+    g.selectAll("g.pin-group").each(function(d) {
+      if (!d) return;
+      const p = projection([d.lng, d.lat]);
+      if (!p) return;
+      d3.select(this).attr("transform", `translate(${p[0]},${p[1]}) scale(${s})`);
+    });
+    // Re-run label collision at current zoom without rebuilding DOM
+    const claimed = [];
+    const k = Math.max(zoomK, 0.01);
+    const pinMin = 28;
+    const labelMin = zoomK >= 2.2 ? 36 : 26;
+    const nodes = g.selectAll("g.pin-group").nodes()
+      .map(n => d3.select(n))
+      .sort((a, b) => {
+        const da = a.datum(), db = b.datum();
+        const sa = selectedId === da.parentId ? 0 : da.layer === "proposed" ? 1 : da.secondary ? 3 : 2;
+        const sb = selectedId === db.parentId ? 0 : db.layer === "proposed" ? 1 : db.secondary ? 3 : 2;
+        return sa - sb;
+      });
+    nodes.forEach(sel => {
+      const d = sel.datum();
+      const xy = projection([d.lng, d.lat]) || [0, 0];
+      const sx = xy[0] * k, sy = xy[1] * k;
+      const lx = (xy[0] + d.label.dx / k) * k;
+      const ly = (xy[1] + d.label.dy / k) * k;
+      let show = true;
+      // When zoomed in, prefer selected hub label; drop near-duplicates
+      if (selectedId && selectedId !== d.parentId && zoomK >= 2.5) {
+        // keep if far from selected; still collide with others
+      }
+      for (const c of claimed) {
+        if (c.text === d.label.text && Math.hypot(c.sx - sx, c.sy - sy) < pinMin) { show = false; break; }
+        if (Math.hypot(c.lx - lx, c.ly - ly) < labelMin) { show = false; break; }
+      }
+      if (show) claimed.push({ text: d.label.text, sx, sy, lx, ly });
+      sel.attr("data-show-label", show ? "1" : "0");
+      sel.select(".pin-label").text(show ? d.label.text : "");
+      const bg = sel.select(".pin-label-bg");
+      if (!show) {
+        bg.attr("width", 0).attr("height", 0);
+        sel.select(".pin-connector").attr("opacity", 0);
+        return;
+      }
+      const text = sel.select(".pin-label");
+      const node = text.node();
+      if (!node) return;
+      let bbox;
+      try { bbox = node.getBBox(); } catch (e) { return; }
+      const padX = 4, padY = 2.5;
+      bg.attr("x", bbox.x - padX)
+        .attr("y", bbox.y - padY)
+        .attr("width", Math.max(0, bbox.width + padX * 2))
+        .attr("height", Math.max(0, bbox.height + padY * 2));
+      sel.select(".pin-connector")
+        .attr("opacity", Math.hypot(d.label.dx, d.label.dy) > 28 ? 0.55 : 0);
+    });
   }
 
   function paintPins() {
     const g = d3.select("#pins");
-    if (g.empty()) return;
-    const pins = DEPLOYMENTS.filter(visibleForMap);
-    const sel = g.selectAll("g.pin-group").data(pins, d => d.id);
+    if (g.empty() || !projection) return;
+    const pins = buildPinItems();
+    const sel = g.selectAll("g.pin-group").data(pins, d => d.key);
     sel.exit().remove();
-    const enter = sel.enter().append("g").attr("class", "pin-group").attr("data-id", d => d.id);
-    enter.append("circle").attr("class", "pin-halo");
+
+    const enter = sel.enter().append("g")
+      .attr("class", d => "pin-group" + (d.secondary ? " is-secondary" : ""))
+      .attr("data-id", d => d.parentId);
+
+    enter.append("circle").attr("class", "pin-glow");
+    enter.append("line").attr("class", "pin-connector");
     enter.append("circle").attr("class", "pin-core");
-    enter.append("text").attr("class", "pin-label").attr("dy", -10).attr("text-anchor", "middle");
-    enter.on("click", (ev, d) => { ev.stopPropagation(); selectDeployment(d.id); });
-    enter.on("mouseenter", (ev, d) => showTip(ev, d.name + " · " + d.shortName));
-    enter.on("mousemove", (ev) => moveTip(ev));
+    enter.append("rect").attr("class", "pin-label-bg");
+    enter.append("text").attr("class", "pin-label");
+
+    enter.on("click", (ev, d) => {
+      ev.stopPropagation();
+      selectDeployment(d.parentId);
+    });
+    enter.on("mouseenter", (ev, d) => {
+      const name = d.secondary
+        ? (d.label.text + " landing · " + d.deployment.shortName)
+        : (d.deployment.name + " · " + d.deployment.shortName);
+      showTip(ev, name);
+    });
+    enter.on("mousemove", moveTip);
     enter.on("mouseleave", hideTip);
 
     const all = enter.merge(sel);
+    all.classed("is-selected", d => selectedId === d.parentId);
+    all.classed("is-secondary", d => d.secondary);
     all.attr("transform", d => {
-      const p = projection([d.hub.lng, d.hub.lat]);
-      return p ? `translate(${p[0]},${p[1]})` : null;
+      const p = projection([d.lng, d.lat]);
+      if (!p) return null;
+      const s = 1 / Math.max(zoomK, 0.01);
+      return `translate(${p[0]},${p[1]}) scale(${s})`;
     });
-    all.select(".pin-halo")
-      .attr("r", d => pinRadius(d) + 5)
-      .attr("stroke", d => pinColor(d));
+    all.attr("opacity", d => {
+      if (listFilter === "proposed" && d.deployment.layer === "live" && !d.secondary) return 0.35;
+      if (selectedId && selectedId !== d.parentId) return 0.55;
+      return 1;
+    });
+
+    all.select(".pin-glow")
+      .attr("r", d => pinRadius(d, d.secondary) + (selectedId === d.parentId ? 5 : 0))
+      .attr("fill", d => pinColor(d.deployment));
+
     all.select(".pin-core")
-      .attr("r", d => pinRadius(d))
-      .attr("fill", d => pinColor(d))
-      .attr("stroke-dasharray", d => (d.layer === "proposed" || d.layer === "indev") ? "3 2" : null)
-      .attr("stroke-width", d => (d.layer === "proposed" || d.layer === "indev") ? 2 : 1.5)
-      .attr("fill-opacity", d => d.layer === "proposed" ? 0.15 : d.layer === "indev" ? 0.35 : 1);
-    all.select(".pin-label")
-      .text(d => d.hub.label)
-      .attr("dy", d => selectedId === d.id ? -14 : -10)
-      .attr("font-weight", d => selectedId === d.id ? "700" : "500")
-      .attr("fill", d => selectedId === d.id ? "#1A1310" : "#4c382a");
+      .attr("r", d => pinRadius(d, d.secondary))
+      .attr("fill", d => pinColor(d.deployment))
+      .attr("fill-opacity", d => {
+        if (d.secondary) return 0.9;
+        if (d.layer === "proposed") return 1;
+        if (d.layer === "indev") return 0.95;
+        if (d.layer === "legacy") return 0.7;
+        return 1;
+      });
+
+    /* Prefer selected pin's label; then proposed; hide duplicate city labels that collide */
+    const claimed = [];
+    /* Collision in SCREEN pixels so dense hubs (Virginia live+P0, Nassau, Anago) declutter when zoomed. */
+    function claimLabel(d, xy) {
+      const text = d.label.text;
+      const k = Math.max(zoomK, 0.01);
+      const sx = xy[0] * k, sy = xy[1] * k;
+      const lx = (xy[0] + d.label.dx / k) * k; // label offset is in pin-local (pre-inverse) space
+      const ly = (xy[1] + d.label.dy / k) * k;
+      const pinMin = 28;   // min screen px between hubs sharing a name
+      const labelMin = zoomK >= 2.2 ? 36 : 26;
+      for (const c of claimed) {
+        if (c.text === text && Math.hypot(c.sx - sx, c.sy - sy) < pinMin) return false;
+        if (Math.hypot(c.lx - lx, c.ly - ly) < labelMin) return false;
+      }
+      claimed.push({ text, sx, sy, lx, ly });
+      return true;
+    }
+    const ordered = all.nodes().map(n => d3.select(n)).sort((a, b) => {
+      const da = a.datum(), db = b.datum();
+      const sa = selectedId === da.parentId ? 0 : da.layer === "proposed" ? 1 : da.secondary ? 3 : 2;
+      const sb = selectedId === db.parentId ? 0 : db.layer === "proposed" ? 1 : db.secondary ? 3 : 2;
+      return sa - sb;
+    });
+    ordered.forEach(sel => {
+      const d = sel.datum();
+      const xy = projection([d.lng, d.lat]) || [0, 0];
+      const show = claimLabel(d, xy);
+      sel.attr("data-show-label", show ? "1" : "0");
+      sel.select(".pin-label")
+        .text(show ? d.label.text : "")
+        .attr("x", d.label.dx)
+        .attr("y", d.label.dy)
+        .attr("text-anchor", d.label.dx < 0 ? "end" : "start")
+        .attr("dominant-baseline", "middle");
+      sel.select(".pin-connector")
+        .attr("x1", 0).attr("y1", 0)
+        .attr("x2", d.label.dx * 0.55)
+        .attr("y2", d.label.dy * 0.55)
+        .attr("opacity", show && Math.hypot(d.label.dx, d.label.dy) > 28 ? 0.55 : 0);
+      const text = sel.select(".pin-label");
+      const bg = sel.select(".pin-label-bg");
+      if (!show) {
+        bg.attr("width", 0).attr("height", 0);
+        return;
+      }
+      const node = text.node();
+      if (!node) return;
+      let bbox;
+      try { bbox = node.getBBox(); } catch (e) { return; }
+      const padX = 4, padY = 2.5;
+      bg.attr("x", bbox.x - padX)
+        .attr("y", bbox.y - padY)
+        .attr("width", Math.max(0, bbox.width + padX * 2))
+        .attr("height", Math.max(0, bbox.height + padY * 2));
+    });
   }
 
   const tip = document.getElementById("tooltip");
@@ -1083,6 +1472,7 @@
     if (resetZoom || filter === "all") {
       const svg = d3.select("#map-svg");
       if (!svg.empty() && zoomBehavior) {
+        zoomK = 1;
         svg.transition().duration(350).call(zoomBehavior.transform, d3.zoomIdentity);
       }
     }
@@ -1091,7 +1481,6 @@
   function setupTabs() {
     document.querySelectorAll(".sidebar-tab").forEach(btn => {
       btn.addEventListener("click", () => {
-        // All always restores world overview; Live/Proposed keep overview unless a pin is later clicked
         setFilter(btn.dataset.filter, { resetZoom: true, clearSelection: true });
       });
     });
@@ -1103,11 +1492,12 @@
     const w = node.clientWidth || 800;
     const h = node.clientHeight || 600;
 
-    projection = d3.geoEqualEarth().fitExtent([[20, 20], [w - 20, h - 40]], { type: "Sphere" });
+    projection = d3.geoEqualEarth().fitExtent([[28, 16], [w - 28, h - 28]], { type: "Sphere" });
     pathGen = d3.geoPath(projection);
 
-    const gRoot = svg.append("g").attr("id", "zoom-root");
+    gRoot = svg.append("g").attr("id", "zoom-root");
     gRoot.append("rect")
+      .attr("class", "ocean")
       .attr("width", w).attr("height", h)
       .attr("fill", "var(--io-bg-canvas)")
       .attr("pointer-events", "all");
@@ -1116,8 +1506,13 @@
     gRoot.append("g").attr("id", "pins");
 
     zoomBehavior = d3.zoom()
-      .scaleExtent([0.8, 8])
-      .on("zoom", (ev) => gRoot.attr("transform", ev.transform));
+      .scaleExtent([0.85, 8])
+      .on("zoom", (ev) => {
+        gRoot.attr("transform", ev.transform);
+        zoomK = ev.transform.k;
+        // Keep hub pins/labels constant screen size; re-collide labels in screen space.
+        applyPinScreenScale();
+      });
     svg.call(zoomBehavior);
 
     document.getElementById("btn-reset").addEventListener("click", () => {
@@ -1125,11 +1520,14 @@
     });
 
     try {
-      const topo = await d3.json("./countries-110m.json").catch(() => d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"));
+      const topo = await d3.json("./countries-110m.json").catch(() =>
+        d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+      );
       const countries = topojson.feature(topo, topo.objects.countries);
+      countryFeatures = countries.features;
 
       countryPaths = gCountries.selectAll("path")
-        .data(countries.features)
+        .data(countryFeatures)
         .join("path")
         .attr("d", pathGen)
         .attr("class", "country")
@@ -1150,8 +1548,14 @@
         .on("click", function (ev, feat) {
           const id = String(feat.id).padStart(3, "0");
           const iso = NUM_TO_ISO2[id] || "";
-          const owners = DEPLOYMENTS.filter(d => iso && d.countries.includes(iso) && visibleForMap(d));
-          if (owners.length) selectDeployment(owners[0].id);
+          const owners = DEPLOYMENTS.filter(d => iso && d.countries.includes(iso) && visibleForMap(d) && isPrimaryPin(d));
+          if (owners.length) {
+            /* Prefer proposed when on Proposed tab, else first visible owner */
+            const preferred = listFilter === "proposed"
+              ? (owners.find(o => o.layer === "proposed") || owners[0])
+              : owners[0];
+            selectDeployment(preferred.id);
+          }
         });
 
       paintCountries();
@@ -1165,9 +1569,9 @@
 
     window.addEventListener("resize", () => {
       const nw = node.clientWidth, nh = node.clientHeight;
-      projection.fitExtent([[20, 20], [nw - 20, nh - 40]], { type: "Sphere" });
+      projection.fitExtent([[28, 16], [nw - 28, nh - 28]], { type: "Sphere" });
       if (countryPaths) countryPaths.attr("d", pathGen);
-      gRoot.select("rect").attr("width", nw).attr("height", nh);
+      gRoot.select("rect.ocean").attr("width", nw).attr("height", nh);
       paintPins();
     });
   }
