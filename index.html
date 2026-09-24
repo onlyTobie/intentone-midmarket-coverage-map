@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en" data-brand="genome" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IntentOne Mid-Market · Data region coverage</title>
+  <link rel="stylesheet" href="https://design-system-mu-murex.vercel.app/v/6.24.1/generated/css/tokens.css" />
+  <link rel="stylesheet" href="https://design-system-mu-murex.vercel.app/v/6.24.1/generated/css/themes/genome-light.css" />
+  <link rel="stylesheet" href="https://design.intenthq.com/api/font-css?profile=genome" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+  <style>
+    :root, [data-brand="genome"][data-theme="light"] {
+      --io-bg-canvas: var(--io-surface-primary);
+      --io-bg-surface: var(--io-surface-stack-2, #ffffff);
+      --io-fg-primary: var(--io-text-primary);
+      --io-fg-secondary: var(--io-text-secondary);
+      --io-fg-muted: var(--io-text-muted);
+      --io-border-subtle: var(--io-border-default);
+      --live: var(--io-action-primary);
+      --live-fill: color-mix(in srgb, var(--io-action-primary) 28%, transparent);
+      --live-wash: color-mix(in srgb, var(--io-action-primary) 12%, transparent);
+      --proposed: var(--io-category-engagement-accent);
+      --proposed-alt: var(--io-action-secondary);
+      --proposed-fill: color-mix(in srgb, var(--io-category-engagement-accent) 10%, transparent);
+      --indev: var(--io-chart-fill-warning);
+      --indev-ink: var(--io-chart-warning);
+      --legacy: var(--io-fg-muted);
+      --sidebar-w: 340px;
+      --detail-w: 320px;
+      --radius: 10px;
+      --font: var(--io-font-primary, "Barlow Semi Condensed", "Arial Narrow", sans-serif);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%; overflow: hidden;
+      background: var(--io-bg-canvas);
+      color: var(--io-fg-primary);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 500;
+    }
+    .app {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr var(--detail-w);
+      grid-template-rows: auto 1fr;
+      height: 100%;
+    }
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 18px;
+      background: var(--io-bg-surface);
+      border-bottom: 1px solid var(--io-border-subtle);
+      z-index: 20;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--io-bg-canvas);
+      border: 2px solid var(--live);
+      display: grid; place-items: center; flex-shrink: 0;
+    }
+    .brand-mark span {
+      width: 10px; height: 10px; border-radius: 50%; background: var(--live);
+    }
+    .brand-copy h1 {
+      font-size: 18px; font-weight: 700; letter-spacing: 0.01em; line-height: 1.15;
+      color: var(--io-fg-primary);
+    }
+    .brand-copy h1 .product { color: var(--live); }
+    .brand-copy p {
+      color: var(--io-fg-secondary); font-size: 12px; margin-top: 2px; max-width: 640px; font-weight: 500;
+    }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+    .legend {
+      display: flex; align-items: center; gap: 12px; padding: 6px 10px;
+      background: var(--io-bg-canvas);
+      border: 1px solid var(--io-border-subtle);
+      border-radius: 8px;
+      font-size: 11.5px; color: var(--io-fg-secondary);
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+    .swatch {
+      width: 12px; height: 12px; border-radius: 3px; display: inline-block;
+      border: 1px solid color-mix(in srgb, var(--io-fg-primary) 18%, transparent);
+    }
+    .swatch.live { background: var(--live); border-color: var(--live); }
+    .swatch.proposed {
+      background: transparent;
+      border: 2px dashed var(--proposed);
+    }
+    .swatch.indev {
+      background: transparent;
+      border: 2px dashed var(--indev);
+    }
+    .swatch.legacy { background: color-mix(in srgb, var(--legacy) 35%, transparent); border-style: dotted; }
+
+    aside.sidebar {
+      background: var(--io-bg-surface);
+      border-right: 1px solid var(--io-border-subtle);
+      display: flex; flex-direction: column; overflow: hidden; z-index: 10;
+    }
+    .sidebar-tabs {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid var(--io-border-subtle);
+    }
+    .sidebar-tab {
+      font-family: var(--font); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; padding: 11px 8px;
+      background: transparent; border: none; color: var(--io-fg-muted); cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .sidebar-tab:hover { color: var(--io-fg-primary); background: var(--io-bg-canvas); }
+    .sidebar-tab.active-live { color: var(--io-color-genome-green-ink, #00732d); border-bottom-color: var(--live); }
+    .sidebar-tab.active-proposed { color: var(--io-color-genome-orange-ink, #9f4a01); border-bottom-color: var(--proposed); }
+    .sidebar-tab.active-all { color: var(--io-fg-primary); border-bottom-color: var(--io-border-strong); }
+    .sidebar-head {
+      padding: 12px 14px 8px; border-bottom: 1px solid var(--io-border-subtle);
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    }
+    .sidebar-head h2 {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--io-fg-muted);
+    }
+    .sidebar-head .count { color: var(--live); font-weight: 700; }
+    .sidebar-note {
+      padding: 8px 14px; font-size: 11.5px; color: var(--io-fg-secondary); line-height: 1.4;
+      border-bottom: 1px solid var(--io-border-subtle); background: var(--io-bg-canvas);
+    }
+    .deployments {
+      flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 7px;
+    }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--io-fg-muted); padding: 8px 4px 2px;
+    }
+    .dep-card {
+      text-align: left; background: var(--io-bg-canvas);
+      border: 1px solid var(--io-border-subtle);
+      border-radius: var(--radius); padding: 11px 12px; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+      position: relative; overflow: hidden;
+    }
+    .dep-card::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent;
+    }
+    .dep-card:hover {
+      background: var(--io-surface-secondary, #fff7ec);
+      border-color: var(--io-border-strong);
+    }
+    .dep-card.selected.layer-live {
+      border-color: var(--live);
+      background: var(--live-wash);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--live) 35%, transparent);
+    }
+    .dep-card.selected.layer-live::before { background: var(--live); }
+    .dep-card.selected.layer-proposed {
+      border-color: var(--proposed);
+      background: var(--proposed-fill);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--proposed) 35%, transparent);
+    }
+    .dep-card.selected.layer-proposed::before { background: var(--proposed); }
+    .dep-card.selected.layer-indev {
+      border-color: var(--indev);
+      background: color-mix(in srgb, var(--indev) 10%, transparent);
+    }
+    .dep-card.selected.layer-indev::before { background: var(--indev); }
+    .dep-card.dimmed { opacity: 0.4; }
+    .dep-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
+    .dep-name { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; color: var(--io-fg-primary); }
+    .layer-pill {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 2px 6px; border-radius: 999px; flex-shrink: 0;
+    }
+    .layer-pill.live {
+      background: var(--live-wash); color: var(--io-color-genome-green-ink, #00732d);
+      border: 1px solid color-mix(in srgb, var(--live) 40%, transparent);
+    }
+    .layer-pill.proposed {
+      background: var(--proposed-fill); color: var(--io-color-genome-orange-ink, #9f4a01);
+      border: 1px solid color-mix(in srgb, var(--proposed) 45%, transparent);
+    }
+    .layer-pill.indev {
+      background: color-mix(in srgb, var(--indev) 14%, transparent);
+      color: var(--indev-ink);
+      border: 1px solid color-mix(in srgb, var(--indev) 45%, transparent);
+    }
+    .layer-pill.legacy {
+      background: color-mix(in srgb, var(--legacy) 12%, transparent);
+      color: var(--legacy);
+      border: 1px solid color-mix(in srgb, var(--legacy) 35%, transparent);
+    }
+    .badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 3px 7px; border-radius: 999px; flex-shrink: 0;
+    }
+    .badge.live-status, .badge.ready {
+      background: var(--live-wash); color: var(--io-color-genome-green-ink, #00732d);
+      border: 1px solid color-mix(in srgb, var(--live) 40%, transparent);
+    }
+    .badge.indev {
+      background: color-mix(in srgb, var(--indev) 14%, transparent);
+      color: var(--indev-ink);
+      border: 1px solid color-mix(in srgb, var(--indev) 45%, transparent);
+    }
+    .badge.legacy {
+      background: color-mix(in srgb, var(--legacy) 12%, transparent);
+      color: var(--legacy);
+      border: 1px solid color-mix(in srgb, var(--legacy) 35%, transparent);
+    }
+    .badge.thin {
+      background: color-mix(in srgb, var(--proposed-alt) 12%, transparent);
+      color: var(--io-color-genome-blue-ink, #016995);
+      border: 1px solid color-mix(in srgb, var(--proposed-alt) 40%, transparent);
+    }
+    .dep-meta {
+      font-size: 11.5px; color: var(--io-fg-secondary); display: flex; flex-wrap: wrap; gap: 5px 9px;
+    }
+    .dep-meta code {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px;
+      color: var(--io-fg-primary);
+      background: color-mix(in srgb, var(--io-fg-primary) 6%, transparent);
+      padding: 1px 5px; border-radius: 4px;
+    }
+    .client-preview {
+      margin-top: 6px; font-size: 11px; color: var(--io-fg-muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .client-preview strong { color: var(--io-fg-secondary); font-weight: 600; }
+
+    .map-wrap {
+      position: relative; overflow: hidden;
+      background: var(--io-bg-canvas);
+      border-left: 1px solid transparent;
+    }
+    #map-svg {
+      width: 100%; height: 100%; display: block;
+      background: var(--io-bg-canvas);
+      cursor: grab;
+    }
+    #map-svg:active { cursor: grabbing; }
+    .country {
+      fill: color-mix(in srgb, var(--io-color-warm-5, #ecddc8) 55%, var(--io-bg-canvas));
+      stroke: color-mix(in srgb, var(--io-fg-primary) 20%, transparent);
+      stroke-width: 0.4;
+      vector-effect: non-scaling-stroke;
+      transition: fill 0.15s, stroke 0.15s, stroke-width 0.15s;
+    }
+    .country.live-cov {
+      fill: var(--live-fill);
+      stroke: color-mix(in srgb, var(--live) 55%, var(--io-fg-primary));
+      stroke-width: 0.55;
+    }
+    .country.proposed-cov {
+      fill: var(--proposed-fill);
+      stroke: var(--proposed);
+      stroke-width: 1.1;
+      stroke-dasharray: 4 2.5;
+    }
+    .country.overlap-cov {
+      fill: var(--live-fill);
+      stroke: var(--proposed);
+      stroke-width: 1.25;
+      stroke-dasharray: 4 2.5;
+    }
+    .country.indev-cov {
+      fill: color-mix(in srgb, var(--indev) 16%, transparent);
+      stroke: var(--indev);
+      stroke-width: 0.9;
+      stroke-dasharray: 3 2;
+    }
+    .country.hover-cov {
+      stroke: var(--io-fg-primary);
+      stroke-width: 1.2;
+      stroke-dasharray: none;
+    }
+    .pin-group { cursor: pointer; }
+    .pin-halo {
+      fill: none; stroke-width: 1.5; opacity: 0.45;
+    }
+    .pin-core {
+      stroke: var(--io-bg-surface); stroke-width: 1.5;
+    }
+    .pin-label {
+      font-family: var(--font); font-size: 10px; font-weight: 700;
+      fill: var(--io-fg-primary); pointer-events: none;
+      paint-order: stroke; stroke: var(--io-bg-canvas); stroke-width: 3px;
+    }
+    .map-toolbar {
+      position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 5;
+    }
+    .map-btn {
+      font-family: var(--font); font-size: 12px; font-weight: 600;
+      border: 1px solid var(--io-border-subtle); background: var(--io-bg-surface);
+      color: var(--io-fg-primary); padding: 6px 10px; border-radius: 8px; cursor: pointer;
+    }
+    .map-btn:hover { border-color: var(--live); background: var(--live-wash); }
+    .map-hint {
+      position: absolute; left: 12px; bottom: 12px; z-index: 5;
+      background: var(--io-bg-surface); border: 1px solid var(--io-border-subtle);
+      border-radius: 8px; padding: 8px 10px; font-size: 11px; color: var(--io-fg-secondary);
+      max-width: 280px; line-height: 1.35;
+    }
+    .map-loading {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      background: var(--io-bg-canvas); color: var(--io-fg-secondary); font-size: 13px; z-index: 4;
+    }
+    .map-loading[hidden] { display: none; }
+
+    aside.detail {
+      background: var(--io-bg-surface);
+      border-left: 1px solid var(--io-border-subtle);
+      display: flex; flex-direction: column; overflow: hidden; z-index: 10;
+    }
+    .detail-scroll { flex: 1; overflow-y: auto; padding: 14px; }
+    .empty-state {
+      color: var(--io-fg-muted); font-size: 13px; line-height: 1.5; padding: 8px 2px;
+    }
+    .detail-title {
+      font-size: 20px; font-weight: 700; letter-spacing: 0.01em; margin-bottom: 4px;
+      color: var(--io-fg-primary);
+    }
+    .detail-sub {
+      font-size: 12px; color: var(--io-fg-secondary); margin-bottom: 12px;
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .kv {
+      display: grid; grid-template-columns: 96px 1fr; gap: 4px 10px;
+      font-size: 12.5px; margin-bottom: 12px;
+    }
+    .kv dt { color: var(--io-fg-muted); font-weight: 600; }
+    .kv dd { color: var(--io-fg-primary); font-weight: 500; }
+    .kv dd code {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px;
+      background: var(--io-bg-canvas); border: 1px solid var(--io-border-subtle);
+      padding: 1px 5px; border-radius: 4px;
+    }
+    .block { margin-top: 14px; }
+    .block h3 {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--io-fg-muted); margin-bottom: 8px;
+    }
+    .client-card {
+      border: 1px solid var(--io-border-subtle); border-radius: 8px;
+      padding: 9px 10px; margin-bottom: 7px; background: var(--io-bg-canvas);
+    }
+    .client-card .cn { font-weight: 700; font-size: 13.5px; color: var(--io-fg-primary); }
+    .client-card .cp { font-size: 11.5px; color: var(--io-fg-secondary); margin-top: 2px; }
+    .client-card .cnote { font-size: 11px; color: var(--io-fg-muted); margin-top: 3px; }
+    .country-list {
+      display: flex; flex-wrap: wrap; gap: 4px;
+    }
+    .country-tag {
+      font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 999px;
+      background: var(--io-bg-canvas); border: 1px solid var(--io-border-subtle);
+      color: var(--io-fg-secondary);
+    }
+    .compute-callout {
+      background: color-mix(in srgb, var(--proposed-alt) 8%, var(--io-bg-canvas));
+      border: 1px solid color-mix(in srgb, var(--proposed-alt) 30%, transparent);
+      border-radius: 8px; padding: 10px 11px; font-size: 12px; color: var(--io-fg-secondary);
+      line-height: 1.45;
+    }
+    .compute-callout strong { color: var(--io-fg-primary); font-weight: 700; }
+    .notes {
+      font-size: 12.5px; color: var(--io-fg-secondary); line-height: 1.5;
+      border-top: 1px solid var(--io-border-subtle); padding-top: 12px; margin-top: 14px;
+    }
+    .source {
+      margin-top: 10px; font-size: 10.5px; color: var(--io-fg-muted);
+    }
+    .tooltip {
+      position: absolute; pointer-events: none; z-index: 30;
+      background: var(--io-bg-surface); border: 1px solid var(--io-border-subtle);
+      border-radius: 8px; padding: 7px 9px; font-size: 11.5px;
+      color: var(--io-fg-primary); box-shadow: 0 6px 20px color-mix(in srgb, var(--io-fg-primary) 12%, transparent);
+      max-width: 220px; display: none;
+    }
+
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 280px 1fr; grid-template-rows: auto 1fr auto; }
+      aside.detail { grid-column: 1 / -1; max-height: 280px; border-left: none; border-top: 1px solid var(--io-border-subtle); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><span></span></div>
+        <div class="brand-copy">
+          <h1><span class="product">IntentOne</span> Mid-Market coverage</h1>
+          <p>Live deployments (green) vs proposed mid-market P0 self-signup regions (coral outline). Select a pin or row for clients, products, and NexusOne compute path.</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="legend" aria-label="Legend">
+          <span class="legend-item"><span class="swatch live"></span> Live</span>
+          <span class="legend-item"><span class="swatch indev"></span> In development</span>
+          <span class="legend-item"><span class="swatch proposed"></span> Proposed P0</span>
+          <span class="legend-item"><span class="swatch legacy"></span> Legacy</span>
+        </div>
+      </div>
+    </header>
+
+    <aside class="sidebar">
+      <div class="sidebar-tabs" role="tablist">
+        <button class="sidebar-tab active-live" data-filter="live" role="tab" aria-selected="true">Live</button>
+        <button class="sidebar-tab" data-filter="proposed" role="tab" aria-selected="false">Proposed</button>
+        <button class="sidebar-tab" data-filter="all" role="tab" aria-selected="false">All</button>
+      </div>
+      <div class="sidebar-head">
+        <h2>Deployments</h2>
+        <span class="count" id="list-count">0</span>
+      </div>
+      <div class="sidebar-note">
+        Overlap regions show green fill with a dashed coral proposed edge. NexusOne soft-compute is portable to any deployment including bare metal.
+      </div>
+      <div class="deployments" id="deployments" role="listbox" aria-label="Deployments"></div>
+    </aside>
+
+    <div class="map-wrap">
+      <div class="map-loading" id="map-loading">Loading world outlines…</div>
+      <svg id="map-svg" role="img" aria-label="World coverage map"></svg>
+      <div class="map-toolbar">
+        <button type="button" class="map-btn" id="btn-reset">Reset view</button>
+      </div>
+      <div class="map-hint">Cream canvas + country shapes only (no tile basemap). Pan and zoom freely.</div>
+      <div class="tooltip" id="tooltip"></div>
+    </div>
+
+    <aside class="detail">
+      <div class="detail-scroll" id="detail">
+        <p class="empty-state">Select a live deployment to see coverage and known clients, or a proposed P0 region for planned mid-market self-signup coverage.</p>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+(function () {
+  const LIVE = "var(--io-action-primary)";
+  const PROPOSED = "var(--io-category-engagement-accent)";
+  const INDEV = "var(--io-chart-fill-warning)";
+
+  /* ISO 3166-1 numeric (world-atlas id) -> alpha-2 */
+  const NUM_TO_ISO2 = {
+    "004":"AF","008":"AL","012":"DZ","020":"AD","024":"AO","028":"AG","032":"AR","036":"AU","040":"AT","048":"BH",
+    "050":"BD","051":"AM","056":"BE","064":"BT","068":"BO","070":"BA","072":"BW","076":"BR","084":"BZ","090":"SB",
+    "096":"BN","100":"BG","104":"MM","108":"BI","112":"BY","116":"KH","120":"CM","124":"CA","132":"CV","140":"CF",
+    "144":"LK","148":"TD","152":"CL","156":"CN","158":"TW","170":"CO","178":"CG","180":"CD","188":"CR","191":"HR",
+    "192":"CU","196":"CY","203":"CZ","204":"BJ","208":"DK","214":"DO","218":"EC","222":"SV","226":"GQ","231":"ET",
+    "232":"ER","233":"EE","242":"FJ","246":"FI","250":"FR","258":"PF","262":"DJ","266":"GA","268":"GE","270":"GM",
+    "275":"PS","276":"DE","288":"GH","300":"GR","304":"GL","320":"GT","324":"GN","328":"GY","332":"HT","340":"HN",
+    "348":"HU","352":"IS","356":"IN","360":"ID","364":"IR","368":"IQ","372":"IE","376":"IL","380":"IT","384":"CI",
+    "388":"JM","392":"JP","398":"KZ","400":"JO","404":"KE","408":"KP","410":"KR","414":"KW","417":"KG","418":"LA",
+    "422":"LB","426":"LS","428":"LV","430":"LR","434":"LY","440":"LT","442":"LU","450":"MG","454":"MW","458":"MY",
+    "462":"MV","466":"ML","478":"MR","480":"MU","484":"MX","496":"MN","498":"MD","499":"ME","504":"MA","508":"MZ",
+    "512":"OM","516":"NA","520":"NR","524":"NP","528":"NL","540":"NC","548":"VU","554":"NZ","558":"NI","562":"NE",
+    "566":"NG","578":"NO","586":"PK","591":"PA","598":"PG","600":"PY","604":"PE","608":"PH","616":"PL","620":"PT",
+    "624":"GW","626":"TL","630":"PR","634":"QA","642":"RO","643":"RU","646":"RW","682":"SA","686":"SN","688":"RS",
+    "694":"SL","702":"SG","703":"SK","704":"VN","705":"SI","706":"SO","710":"ZA","716":"ZW","724":"ES","728":"SS",
+    "729":"SD","732":"EH","740":"SR","748":"SZ","752":"SE","756":"CH","760":"SY","762":"TJ","764":"TH","768":"TG",
+    "780":"TT","784":"AE","788":"TN","792":"TR","795":"TM","800":"UG","804":"UA","807":"MK","818":"EG","826":"GB",
+    "834":"TZ","840":"US","854":"BF","858":"UY","860":"UZ","862":"VE","887":"YE","894":"ZM","044":"BS","052":"BB",
+    "308":"GD","659":"KN","662":"LC","670":"VC","780":"TT","212":"DM","092":"VG","136":"KY","533":"AW","531":"CW"
+  };
+
+  const DEPLOYMENTS = [
+    {
+      id: "live-ihq-eu",
+      layer: "live",
+      name: "Hosted EU Ireland",
+      shortName: "ihq-eu",
+      cloud: "AWS",
+      regionCode: "eu-west-1",
+      regionLabel: "Europe (Ireland)",
+      model: "Intent Hosted (multi-tenant)",
+      computePath: "Databricks preferred (present) · NexusOne portable fallback",
+      llmPath: "Existing stack / Bedrock where applicable",
+      status: "Live",
+      hub: { lat: 53.3498, lng: -6.2603, label: "Dublin" },
+      secondaryHubs: [{ lat: 50.1109, lng: 8.6821, label: "Frankfurt landing" }],
+      countries: ["IE","GB","NO","SE","DK","FI","IS","NL","BE","FR","ES","PT","IT","LU","MT","CY","GR"],
+      countryNames: ["Ireland","United Kingdom","Norway","Sweden","Denmark","Finland","Iceland","Netherlands","Belgium","France","Spain","Portugal","Italy","Luxembourg","Malta","Cyprus","Greece"],
+      clients: [
+        { name: "Fishka", deploymentId: "ihq-eu", products: "Edge live · Lift eng · IntentOne interest", note: "Migrated from Anagog legacy" },
+        { name: "MTN Nigeria", deploymentId: "ihq-eu", products: "Lift live · IntentOne live · Edge eng", note: "Lift + I1 via Frankfurt landing (eu-central-1 path)" }
+      ],
+      overlapProposedId: "p0-eu-ireland",
+      notes: "Live Intent Hosted EU. Fishka is the Edge reference client on ihq-eu. MTN Nigeria Lift + IntentOne land via Frankfurt. Proposed mid-market P0 expands the same Ireland region for self-signup.",
+      source: "Customer Deployment Register · environments.md"
+    },
+    {
+      id: "live-ihq-za",
+      layer: "live",
+      name: "Hosted South Africa",
+      shortName: "ihq-za",
+      cloud: "AWS",
+      regionCode: "af-south-1 / SA path",
+      regionLabel: "South Africa",
+      model: "Intent Hosted (multi-tenant)",
+      computePath: "Databricks preferred where present · NexusOne portable fallback",
+      llmPath: "Region-aligned stack",
+      status: "Live",
+      hub: { lat: -26.2041, lng: 28.0473, label: "Johannesburg" },
+      countries: ["ZA","BW","NA","SZ","LS"],
+      countryNames: ["South Africa","Botswana","Namibia","Eswatini","Lesotho"],
+      clients: [
+        { name: "Easy Equities", deploymentId: "ihq-za", products: "Edge live · Lift live · IntentOne interest", note: "AWS South Africa" }
+      ],
+      overlapProposedId: "p0-south-africa",
+      notes: "Live Hosted ZA: Edge + Lift for Easy Equities. Azure SA thin footprint and MTN-owned Azure are separate pins.",
+      source: "Customer Deployment Register"
+    },
+    {
+      id: "live-ihq-azure-za",
+      layer: "live",
+      name: "Azure SA (Intent thin)",
+      shortName: "ihq-azure-za",
+      cloud: "Azure",
+      regionCode: "southafricanorth",
+      regionLabel: "Azure South Africa North",
+      model: "Intent Hosted / thin Azure SA",
+      computePath: "Databricks preferred if present · NexusOne portable fallback",
+      llmPath: "Azure OpenAI path",
+      status: "Thin",
+      hub: { lat: -25.9, lng: 28.1, label: "Azure SA" },
+      countries: ["ZA"],
+      countryNames: ["South Africa"],
+      clients: [],
+      overlapProposedId: "p0-south-africa",
+      notes: "Thin Azure SA footprint with no strong customer anchor. Distinct from Hosted ZA (ihq-za) and MTN-owned Azure (mtn-azure-za).",
+      source: "environments.md"
+    },
+    {
+      id: "live-ihq-cbl",
+      layer: "live",
+      name: "Cable Bahamas (Dedicated)",
+      shortName: "ihq-cbl",
+      cloud: "AWS",
+      regionCode: "us-east-1",
+      regionLabel: "US East (dedicated)",
+      model: "Intent Dedicated",
+      computePath: "Databricks + Lift · NexusOne portable if needed",
+      llmPath: "Per dedicated stack",
+      status: "Live",
+      hub: { lat: 25.0443, lng: -77.3504, label: "Nassau" },
+      countries: ["BS"],
+      countryNames: ["Bahamas"],
+      clients: [
+        { name: "Cable Bahamas", deploymentId: "ihq-cbl", products: "Lift · Databricks", note: "Dedicated us-east-1 tenancy" }
+      ],
+      overlapProposedId: "p0-us-east",
+      notes: "Dedicated us-east-1. Proposed mid-market US East P0 is multi-tenant self-signup, not a replacement for this dedicated pin.",
+      source: "Customer Deployment Register"
+    },
+    {
+      id: "live-ihq-vzw",
+      layer: "live",
+      name: "Verizon (Dedicated)",
+      shortName: "ihq-vzw",
+      cloud: "AWS (Verizon account)",
+      regionCode: "us-east-1",
+      regionLabel: "US East · Verizon tenancy",
+      model: "Intent Dedicated",
+      computePath: "Customer-account AWS · Databricks/Lift · NexusOne portable if required",
+      llmPath: "Per enterprise contract",
+      status: "Live",
+      hub: { lat: 40.7128, lng: -74.006, label: "US (VZ)" },
+      countries: ["US"],
+      countryNames: ["United States"],
+      clients: [
+        { name: "Verizon", deploymentId: "ihq-vzw", products: "Lift live · Edge not deployed · IntentOne eng", note: "AWS in Verizon account" }
+      ],
+      overlapProposedId: null,
+      notes: "Enterprise dedicated tenancy. Not a mid-market self-signup region. Shown for live footprint completeness.",
+      source: "Customer Deployment Register"
+    },
+    {
+      id: "live-mtn-azure-za",
+      layer: "live",
+      name: "MTN South Africa (Azure)",
+      shortName: "mtn-azure-za",
+      cloud: "Azure (MTN-owned)",
+      regionCode: "southafricanorth",
+      regionLabel: "Azure South Africa North",
+      model: "Intent Dedicated (customer Azure)",
+      computePath: "Azure Databricks path · NexusOne portable fallback",
+      llmPath: "Azure OpenAI",
+      status: "In build",
+      hub: { lat: -25.7479, lng: 28.2293, label: "Pretoria / JHB Azure" },
+      countries: ["ZA"],
+      countryNames: ["South Africa"],
+      clients: [
+        { name: "MTN South Africa", deploymentId: "mtn-azure-za", products: "Lift in build · Edge eng · IntentOne interest", note: "MTN-owned Azure SA" }
+      ],
+      overlapProposedId: "p0-south-africa",
+      notes: "MTN-owned Azure SA. Lift in build. Proposed P0 Azure southafricanorth is the mid-market self-signup peer.",
+      source: "Customer Deployment Register"
+    },
+    {
+      id: "legacy-anagog",
+      layer: "legacy",
+      name: "Anagog legacy (US)",
+      shortName: "anagog",
+      cloud: "AWS",
+      regionCode: "US (legacy)",
+      regionLabel: "Anagog legacy AWS US",
+      model: "Legacy (not primary live)",
+      computePath: "Legacy stack · migrate toward Intent Hosted / NexusOne",
+      llmPath: "n/a",
+      status: "Legacy",
+      hub: { lat: 37.5, lng: -95.5, label: "Anagog US" },
+      countries: ["US"],
+      countryNames: ["United States"],
+      clients: [
+        { name: "AnyPark", deploymentId: "anagog", products: "Edge (legacy)", note: "Mark LEGACY · not primary live green" }
+      ],
+      overlapProposedId: null,
+      notes: "Anagog legacy AWS US. Shown for completeness. Do not treat as primary live IntentOne green footprint.",
+      source: "Customer Deployment Register"
+    },
+    {
+      id: "indev-ihq-us-east",
+      layer: "indev",
+      name: "US East Hosted",
+      shortName: "ihq-us-east",
+      cloud: "AWS",
+      regionCode: "us-east-1",
+      regionLabel: "US East (N. Virginia)",
+      model: "Intent Hosted / shared US",
+      computePath: "Databricks preferred where present · NexusOne portable fallback",
+      llmPath: "Bedrock / stack-local",
+      status: "In development",
+      hub: { lat: 39.0438, lng: -77.4874, label: "N. Virginia" },
+      countries: ["US","CA"],
+      countryNames: ["United States","Canada"],
+      clients: [
+        { name: "YPF", deploymentId: "ihq-us-east", products: "Edge · IntentOne interest", note: "" },
+        { name: "Grab", deploymentId: "ihq-us-east", products: "Edge eng (in development)", note: "" }
+      ],
+      overlapProposedId: "p0-us-east",
+      notes: "US East hosted path in development. Proposed P0 US East aligns mid-market self-signup with this residency pattern.",
+      source: "Customer Deployment Register"
+    },
+    {
+      id: "indev-ihq-in",
+      layer: "indev",
+      name: "India Hosted",
+      shortName: "ihq-in",
+      cloud: "AWS (planned)",
+      regionCode: "ap-south-1 (TBD)",
+      regionLabel: "India · coming soon",
+      model: "Intent Hosted (planned)",
+      computePath: "Databricks planned · NexusOne portable fallback",
+      llmPath: "TBD",
+      status: "In development",
+      hub: { lat: 19.076, lng: 72.8777, label: "Mumbai" },
+      countries: ["IN"],
+      countryNames: ["India"],
+      clients: [
+        { name: "Nykaa", deploymentId: "(migrate)", products: "Edge on Anagog US · IntentOne interest", note: "Migration to India environment planned" }
+      ],
+      overlapProposedId: null,
+      notes: "India hosted environment in development. Not in the current approved mid-market P0 set.",
+      source: "environments.md"
+    },
+    {
+      id: "indev-lagos-bm",
+      layer: "indev",
+      name: "Lagos bare metal",
+      shortName: "ihq-dedicated",
+      cloud: "Bare metal",
+      regionCode: "MTN-NG Lagos",
+      regionLabel: "Lagos bare metal",
+      model: "Intent Dedicated (bare metal)",
+      computePath: "NexusOne portable (container + object storage) · Databricks not assumed on bare metal",
+      llmPath: "Per on-prem design",
+      status: "In development",
+      hub: { lat: 6.5244, lng: 3.3792, label: "Lagos" },
+      countries: ["NG"],
+      countryNames: ["Nigeria"],
+      clients: [
+        { name: "MTN Nigeria (on-prem)", deploymentId: "ihq-dedicated", products: "Lift eng · Edge interest · IntentOne not deployed", note: "Bare metal · MTN-NG Lagos" }
+      ],
+      overlapProposedId: null,
+      notes: "Reference pin for NexusOne portability: container linked to object storage can run on bare metal. Soft compute is not Databricks-only.",
+      source: "Customer Deployment Register · environments.md"
+    },
+    {
+      id: "indev-vivo-br",
+      layer: "indev",
+      name: "Vivo Brazil",
+      shortName: "Vivo",
+      cloud: "AWS",
+      regionCode: "sa-east-1 (expected)",
+      regionLabel: "AWS Brazil",
+      model: "In development",
+      computePath: "Databricks preferred when present · NexusOne portable fallback",
+      llmPath: "TBD / Model Serving when region Ready",
+      status: "In development",
+      hub: { lat: -23.5505, lng: -46.6333, label: "São Paulo" },
+      countries: ["BR"],
+      countryNames: ["Brazil"],
+      clients: [
+        { name: "Vivo", deploymentId: "(none listed)", products: "Edge eng · IntentOne eng", note: "AWS Brazil eng" }
+      ],
+      overlapProposedId: "p0-brazil-latam",
+      notes: "In-dev Brazil client path. Proposed P0 São Paulo expands self-signup LatAm coverage around the same hub.",
+      source: "Customer Deployment Register"
+    },
+    {
+      id: "p0-eu-ireland",
+      layer: "proposed",
+      name: "P0 EU Ireland",
+      shortName: "eu-west-1 self-signup",
+      cloud: "AWS",
+      regionCode: "eu-west-1",
+      regionLabel: "Europe (Ireland) · mid-market self-signup",
+      model: "Proposed P0 · IntentOne-hosted region-pinned",
+      computePath: "Databricks preferred (already on Hosted EU) · NexusOne portable fallback",
+      llmPath: "Amazon Bedrock · Claude",
+      status: "Ready",
+      hub: { lat: 53.45, lng: -6.05, label: "Dublin P0" },
+      countries: ["IE","GB","NO","SE","DK","FI","IS","NL","BE","FR","ES","PT","IT","LU","MT","CY","GR"],
+      countryNames: ["Ireland","United Kingdom","Norway","Sweden","Denmark","Finland","Iceland","Netherlands","Belgium","France","Spain","Portugal","Italy","Luxembourg","Malta","Cyprus","Greece"],
+      clients: [],
+      overlapLiveId: "live-ihq-eu",
+      notes: "Proposed mid-market P0 for Ireland, UK, Nordics, Benelux, and general EU English-preferred. Overlaps live Hosted EU (Fishka et al.): live clients stay on green detail; this card is the self-signup expansion path. DACH preferring DE residency should use P0 Frankfurt.",
+      source: "Approved mid-market GTM P0"
+    },
+    {
+      id: "p0-eu-frankfurt",
+      layer: "proposed",
+      name: "P0 EU Frankfurt",
+      shortName: "eu-central-1 self-signup",
+      cloud: "AWS",
+      regionCode: "eu-central-1",
+      regionLabel: "Europe (Frankfurt) · mid-market self-signup",
+      model: "Proposed P0 · IntentOne-hosted region-pinned",
+      computePath: "Databricks preferred · NexusOne portable fallback",
+      llmPath: "Amazon Bedrock · Claude",
+      status: "Ready",
+      hub: { lat: 50.05, lng: 8.75, label: "Frankfurt P0" },
+      countries: ["DE","AT","CH","PL","CZ","SK","HU","RO","BG","SI","HR","EE","LV","LT"],
+      countryNames: ["Germany","Austria","Switzerland","Poland","Czechia","Slovakia","Hungary","Romania","Bulgaria","Slovenia","Croatia","Estonia","Latvia","Lithuania"],
+      clients: [],
+      overlapLiveId: "live-ihq-eu",
+      notes: "Coverage for DACH and CEE preferring DE residency. Live MTN Nigeria also uses Frankfurt landing under ihq-eu - different tenancy; proposed card is mid-market self-signup only.",
+      source: "Approved mid-market GTM P0"
+    },
+    {
+      id: "p0-us-east",
+      layer: "proposed",
+      name: "P0 US East",
+      shortName: "us-east-1 self-signup",
+      cloud: "AWS",
+      regionCode: "us-east-1",
+      regionLabel: "US East · mid-market self-signup",
+      model: "Proposed P0 · IntentOne-hosted region-pinned",
+      computePath: "Databricks preferred · NexusOne portable fallback",
+      llmPath: "Amazon Bedrock · Claude",
+      status: "Ready",
+      hub: { lat: 38.9, lng: -77.3, label: "N. Virginia P0" },
+      countries: ["US","CA"],
+      countryNames: ["United States","Canada"],
+      clients: [],
+      overlapLiveId: "indev-ihq-us-east",
+      notes: "Default Americas mid-market until Phase 2 Canada-specific. Aligns with US East in-dev pattern and nearby Cable Bahamas dedicated. Live clients listed on their own cards; this is self-signup expansion.",
+      source: "Approved mid-market GTM P0"
+    },
+    {
+      id: "p0-brazil-latam",
+      layer: "proposed",
+      name: "P0 Brazil / LatAm",
+      shortName: "sa-east-1 self-signup",
+      cloud: "AWS",
+      regionCode: "sa-east-1",
+      regionLabel: "South America (São Paulo) · mid-market",
+      model: "Proposed P0 · IntentOne-hosted region-pinned",
+      computePath: "Databricks Model Serving preferred · NexusOne portable fallback",
+      llmPath: "Databricks Model Serving",
+      status: "Ready",
+      hub: { lat: -23.65, lng: -46.5, label: "São Paulo P0" },
+      countries: ["BR","MX","AR","CL","CO","PE","UY","PY","EC","VE","BO","CR","PA","GT","HN","SV","NI","DO"],
+      countryNames: ["Brazil","Mexico","Argentina","Chile","Colombia","Peru","Uruguay","Paraguay","Ecuador","Venezuela","Bolivia","Costa Rica","Panama","Guatemala","Honduras","El Salvador","Nicaragua","Dominican Republic"],
+      clients: [],
+      overlapLiveId: "indev-vivo-br",
+      notes: "São Paulo is the pin. Covers Brazil + broader LatAm. Overlaps in-dev Vivo Brazil path - proposed is self-signup mid-market coverage.",
+      source: "Approved mid-market GTM P0"
+    },
+    {
+      id: "p0-south-africa",
+      layer: "proposed",
+      name: "P0 South Africa (Azure)",
+      shortName: "southafricanorth self-signup",
+      cloud: "Azure",
+      regionCode: "southafricanorth",
+      regionLabel: "Azure South Africa North · mid-market",
+      model: "Proposed P0 · IntentOne-hosted region-pinned",
+      computePath: "Databricks preferred on Azure · NexusOne portable fallback (thin Azure SA / bare metal parity)",
+      llmPath: "Azure OpenAI",
+      status: "Ready",
+      hub: { lat: -26.35, lng: 28.2, label: "JHB Azure P0" },
+      countries: ["ZA","NG","KE","GH","TZ","UG","RW","ZM","ZW","BW","NA","MZ","ET","SN","CI","CM"],
+      countryNames: ["South Africa","Nigeria","Kenya","Ghana","Tanzania","Uganda","Rwanda","Zambia","Zimbabwe","Botswana","Namibia","Mozambique","Ethiopia","Senegal","Côte d'Ivoire","Cameroon"],
+      clients: [],
+      overlapLiveId: "live-mtn-azure-za",
+      notes: "Azure southafricanorth (not AWS Cape Town). SSA broader coverage best-effort. Live Hosted ZA, thin ihq-azure-za, and MTN Azure are green/thin peers; this card is mid-market self-signup.",
+      source: "Approved mid-market GTM P0"
+    }
+  ];
+
+  const byId = Object.fromEntries(DEPLOYMENTS.map(d => [d.id, d]));
+  let selectedId = null;
+  let listFilter = "live";
+  let countryPaths = null;
+  let projection = null;
+  let pathGen = null;
+  let zoomBehavior = null;
+
+  function layerGroup(d) {
+    if (d.layer === "proposed") return "proposed";
+    if (d.layer === "indev") return "indev";
+    if (d.layer === "legacy") return "legacy";
+    return "live";
+  }
+
+  function statusClass(status) {
+    const s = (status || "").toLowerCase();
+    if (s === "legacy") return "legacy";
+    if (s === "thin" || s === "in build") return s === "thin" ? "thin" : "indev";
+    if (s.includes("develop")) return "indev";
+    if (s === "live" || s === "ready") return s === "live" ? "live-status" : "ready";
+    return "ready";
+  }
+
+  function listLayerKey(d) {
+    if (listFilter === "all") return true;
+    if (listFilter === "live") return d.layer === "live" || d.layer === "indev" || d.layer === "legacy";
+    if (listFilter === "proposed") return d.layer === "proposed";
+    return true;
+  }
+
+  function visibleForMap(d) {
+    if (listFilter === "all") return true;
+    if (listFilter === "live") return d.layer === "live" || d.layer === "indev" || d.layer === "legacy";
+    if (listFilter === "proposed") return d.layer === "proposed";
+    return true;
+  }
+
+  function coverageForIso(iso2) {
+    const owners = DEPLOYMENTS.filter(d => d.countries.includes(iso2) && visibleForMap(d));
+    const hasLive = owners.some(d => d.layer === "live");
+    const hasProposed = owners.some(d => d.layer === "proposed");
+    const hasIndev = owners.some(d => d.layer === "indev");
+    if (hasLive && hasProposed) return "overlap-cov";
+    if (hasLive) return "live-cov";
+    if (hasProposed) return "proposed-cov";
+    if (hasIndev) return "indev-cov";
+    return "";
+  }
+
+  function renderList() {
+    const box = document.getElementById("deployments");
+    const items = DEPLOYMENTS.filter(listLayerKey);
+    document.getElementById("list-count").textContent = String(items.length);
+
+    const groups = [
+      { key: "live", label: "Live", filter: d => d.layer === "live" },
+      { key: "indev", label: "In development", filter: d => d.layer === "indev" },
+      { key: "legacy", label: "Legacy", filter: d => d.layer === "legacy" },
+      { key: "proposed", label: "Proposed P0", filter: d => d.layer === "proposed" }
+    ];
+
+    let html = "";
+    groups.forEach(g => {
+      const rows = items.filter(g.filter);
+      if (!rows.length) return;
+      html += `<div class="section-label">${g.label}</div>`;
+      rows.forEach(d => {
+        const lg = layerGroup(d);
+        const selected = selectedId === d.id;
+        const dimmed = selectedId && selectedId !== d.id;
+        const clients = (d.clients || []).map(c => c.name).join(", ") || "No customer anchor";
+        html += `
+          <button type="button" class="dep-card layer-${lg}${selected ? " selected" : ""}${dimmed ? " dimmed" : ""}"
+            data-id="${d.id}" role="option" aria-selected="${selected}">
+            <div class="dep-top">
+              <div class="dep-name">${d.name}</div>
+              <span class="layer-pill ${lg}">${lg === "indev" ? "In dev" : lg}</span>
+            </div>
+            <div class="dep-meta">
+              <code>${d.shortName}</code>
+              <span>${d.cloud}</span>
+              <span>${d.regionCode}</span>
+              <span class="badge ${statusClass(d.status)}">${d.status}</span>
+            </div>
+            <div class="client-preview"><strong>Clients:</strong> ${clients}</div>
+          </button>`;
+      });
+    });
+    box.innerHTML = html || `<p class="empty-state" style="padding:12px">No deployments in this filter.</p>`;
+    box.querySelectorAll(".dep-card").forEach(el => {
+      el.addEventListener("click", () => selectDeployment(el.dataset.id));
+    });
+  }
+
+  function renderDetail(d) {
+    const el = document.getElementById("detail");
+    if (!d) {
+      el.innerHTML = `<p class="empty-state">Select a live deployment to see coverage and known clients, or a proposed P0 region for planned mid-market self-signup coverage.</p>`;
+      return;
+    }
+    const lg = layerGroup(d);
+    const clientsHtml = (d.clients && d.clients.length)
+      ? d.clients.map(c => `
+          <div class="client-card">
+            <div class="cn">${c.name}</div>
+            <div class="cp"><code>${c.deploymentId}</code> · ${c.products}</div>
+            ${c.note ? `<div class="cnote">${c.note}</div>` : ""}
+          </div>`).join("")
+      : `<p class="empty-state" style="padding:0">No named customers on this card yet (typical for proposed P0 self-signup).</p>`;
+
+    const countries = (d.countryNames || []).map(n => `<span class="country-tag">${n}</span>`).join("");
+
+    el.innerHTML = `
+      <div class="chip-row">
+        <span class="layer-pill ${lg}">${lg === "indev" ? "In development" : lg}</span>
+        <span class="badge ${statusClass(d.status)}">${d.status}</span>
+      </div>
+      <div class="detail-title">${d.name}</div>
+      <div class="detail-sub">${d.regionLabel}</div>
+      <dl class="kv">
+        <dt>Deployment</dt><dd><code>${d.shortName}</code></dd>
+        <dt>Cloud</dt><dd>${d.cloud}</dd>
+        <dt>Region</dt><dd><code>${d.regionCode}</code></dd>
+        <dt>Model</dt><dd>${d.model}</dd>
+        <dt>Hub</dt><dd>${d.hub.label}</dd>
+      </dl>
+      <div class="block">
+        <h3>Clients · products</h3>
+        ${clientsHtml}
+      </div>
+      <div class="block">
+        <h3>Coverage countries</h3>
+        <div class="country-list">${countries}</div>
+      </div>
+      <div class="block">
+        <h3>NexusOne soft-compute</h3>
+        <div class="compute-callout">
+          <strong>Path:</strong> ${d.computePath}<br />
+          <strong>LLM:</strong> ${d.llmPath}<br /><br />
+          <strong>NexusOne</strong> = container linked to object storage, portable to any deployment including bare metal. Databricks preferred where present; NexusOne is the fallback when Databricks is thin or unavailable.
+        </div>
+      </div>
+      <div class="notes">${d.notes}</div>
+      <div class="source">Source: ${d.source}</div>
+    `;
+  }
+
+  function selectDeployment(id) {
+    selectedId = id;
+    const d = byId[id];
+    renderList();
+    renderDetail(d);
+    paintCountries();
+    paintPins();
+    if (d && projection) {
+      const [x, y] = projection([d.hub.lng, d.hub.lat]);
+      // gentle focus via zoom transform toward hub
+      const svg = d3.select("#map-svg");
+      const node = svg.node();
+      const w = node.clientWidth, h = node.clientHeight;
+      const scale = 2.2;
+      const t = d3.zoomIdentity.translate(w / 2 - x * scale, h / 2 - y * scale).scale(scale);
+      svg.transition().duration(450).call(zoomBehavior.transform, t);
+    }
+  }
+
+  function paintCountries() {
+    if (!countryPaths) return;
+    countryPaths.attr("class", function (feat) {
+      const id = String(feat.id).padStart(3, "0");
+      const iso = NUM_TO_ISO2[id] || NUM_TO_ISO2[feat.id] || "";
+      const cov = iso ? coverageForIso(iso) : "";
+      return "country" + (cov ? " " + cov : "");
+    });
+  }
+
+  function pinColor(d) {
+    if (d.layer === "proposed") return "#f27d28";
+    if (d.layer === "indev") return "#f27d28";
+    if (d.layer === "legacy") return "#7d5d43";
+    return "#00d058";
+  }
+
+  function pinRadius(d) {
+    return selectedId === d.id ? 7.5 : 5.5;
+  }
+
+  function paintPins() {
+    const g = d3.select("#pins");
+    if (g.empty()) return;
+    const pins = DEPLOYMENTS.filter(visibleForMap);
+    const sel = g.selectAll("g.pin-group").data(pins, d => d.id);
+    sel.exit().remove();
+    const enter = sel.enter().append("g").attr("class", "pin-group").attr("data-id", d => d.id);
+    enter.append("circle").attr("class", "pin-halo");
+    enter.append("circle").attr("class", "pin-core");
+    enter.append("text").attr("class", "pin-label").attr("dy", -10).attr("text-anchor", "middle");
+    enter.on("click", (ev, d) => { ev.stopPropagation(); selectDeployment(d.id); });
+    enter.on("mouseenter", (ev, d) => showTip(ev, d.name + " · " + d.shortName));
+    enter.on("mousemove", (ev) => moveTip(ev));
+    enter.on("mouseleave", hideTip);
+
+    const all = enter.merge(sel);
+    all.attr("transform", d => {
+      const p = projection([d.hub.lng, d.hub.lat]);
+      return p ? `translate(${p[0]},${p[1]})` : null;
+    });
+    all.select(".pin-halo")
+      .attr("r", d => pinRadius(d) + 5)
+      .attr("stroke", d => pinColor(d));
+    all.select(".pin-core")
+      .attr("r", d => pinRadius(d))
+      .attr("fill", d => pinColor(d))
+      .attr("stroke-dasharray", d => (d.layer === "proposed" || d.layer === "indev") ? "3 2" : null)
+      .attr("stroke-width", d => (d.layer === "proposed" || d.layer === "indev") ? 2 : 1.5)
+      .attr("fill-opacity", d => d.layer === "proposed" ? 0.15 : d.layer === "indev" ? 0.35 : 1);
+    all.select(".pin-label")
+      .text(d => selectedId === d.id ? d.hub.label : "")
+      .attr("fill", "#4c382a");
+  }
+
+  const tip = document.getElementById("tooltip");
+  function showTip(ev, text) {
+    tip.style.display = "block";
+    tip.textContent = text;
+    moveTip(ev);
+  }
+  function moveTip(ev) {
+    const wrap = document.querySelector(".map-wrap").getBoundingClientRect();
+    tip.style.left = (ev.clientX - wrap.left + 12) + "px";
+    tip.style.top = (ev.clientY - wrap.top + 12) + "px";
+  }
+  function hideTip() { tip.style.display = "none"; }
+
+  function setupTabs() {
+    document.querySelectorAll(".sidebar-tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        listFilter = btn.dataset.filter;
+        document.querySelectorAll(".sidebar-tab").forEach(b => {
+          b.classList.remove("active-live", "active-proposed", "active-all");
+          b.setAttribute("aria-selected", "false");
+        });
+        btn.classList.add("active-" + listFilter);
+        btn.setAttribute("aria-selected", "true");
+        selectedId = null;
+        renderList();
+        renderDetail(null);
+        paintCountries();
+        paintPins();
+      });
+    });
+  }
+
+  async function initMap() {
+    const svg = d3.select("#map-svg");
+    const node = svg.node();
+    const w = node.clientWidth || 800;
+    const h = node.clientHeight || 600;
+
+    projection = d3.geoEqualEarth().fitExtent([[20, 20], [w - 20, h - 40]], { type: "Sphere" });
+    pathGen = d3.geoPath(projection);
+
+    const gRoot = svg.append("g").attr("id", "zoom-root");
+    gRoot.append("rect")
+      .attr("width", w).attr("height", h)
+      .attr("fill", "var(--io-bg-canvas)")
+      .attr("pointer-events", "all");
+
+    const gCountries = gRoot.append("g").attr("id", "countries");
+    gRoot.append("g").attr("id", "pins");
+
+    zoomBehavior = d3.zoom()
+      .scaleExtent([0.8, 8])
+      .on("zoom", (ev) => gRoot.attr("transform", ev.transform));
+    svg.call(zoomBehavior);
+
+    document.getElementById("btn-reset").addEventListener("click", () => {
+      svg.transition().duration(350).call(zoomBehavior.transform, d3.zoomIdentity);
+    });
+
+    try {
+      const topo = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
+      const countries = topojson.feature(topo, topo.objects.countries);
+
+      countryPaths = gCountries.selectAll("path")
+        .data(countries.features)
+        .join("path")
+        .attr("d", pathGen)
+        .attr("class", "country")
+        .on("mouseenter", function (ev, feat) {
+          const id = String(feat.id).padStart(3, "0");
+          const iso = NUM_TO_ISO2[id] || "";
+          const owners = DEPLOYMENTS.filter(d => iso && d.countries.includes(iso) && visibleForMap(d));
+          d3.select(this).classed("hover-cov", true);
+          if (owners.length) {
+            showTip(ev, (iso || "Country") + ": " + owners.map(o => o.shortName).join(", "));
+          }
+        })
+        .on("mousemove", moveTip)
+        .on("mouseleave", function () {
+          d3.select(this).classed("hover-cov", false);
+          hideTip();
+        })
+        .on("click", function (ev, feat) {
+          const id = String(feat.id).padStart(3, "0");
+          const iso = NUM_TO_ISO2[id] || "";
+          const owners = DEPLOYMENTS.filter(d => iso && d.countries.includes(iso) && visibleForMap(d));
+          if (owners.length) selectDeployment(owners[0].id);
+        });
+
+      paintCountries();
+      paintPins();
+      document.getElementById("map-loading").hidden = true;
+    } catch (err) {
+      document.getElementById("map-loading").textContent = "Could not load world outlines. Pins still work.";
+      paintPins();
+      console.error(err);
+    }
+
+    window.addEventListener("resize", () => {
+      const nw = node.clientWidth, nh = node.clientHeight;
+      projection.fitExtent([[20, 20], [nw - 20, nh - 40]], { type: "Sphere" });
+      if (countryPaths) countryPaths.attr("d", pathGen);
+      gRoot.select("rect").attr("width", nw).attr("height", nh);
+      paintPins();
+    });
+  }
+
+  setupTabs();
+  renderList();
+  initMap();
+})();
+  </script>
+</body>
+</html>
