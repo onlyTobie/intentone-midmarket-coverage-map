@@ -407,6 +407,7 @@
           <span class="legend-item"><span class="swatch indev"></span> In development</span>
           <span class="legend-item"><span class="swatch proposed"></span> Proposed P0</span>
           <span class="legend-item"><span class="swatch legacy"></span> Legacy</span>
+          <span class="legend-item" style="max-width:280px;white-space:normal;line-height:1.3">Hubs serve a catchment, not one country. Example: São Paulo covers most of South America.</span>
         </div>
       </div>
     </header>
@@ -422,7 +423,7 @@
         <span class="count" id="list-count">0</span>
       </div>
       <div class="sidebar-note">
-        Overlap regions show green fill with a dashed coral proposed edge. NexusOne soft-compute is portable to any deployment including bare metal.
+        Hubs serve a catchment, not one country. Example: São Paulo covers most of South America. Overlap regions show green fill with a dashed coral proposed edge. NexusOne soft-compute is portable to any deployment including bare metal.
       </div>
       <div class="deployments" id="deployments" role="listbox" aria-label="Deployments"></div>
     </aside>
@@ -457,7 +458,7 @@
     "096":"BN","100":"BG","104":"MM","108":"BI","112":"BY","116":"KH","120":"CM","124":"CA","132":"CV","140":"CF",
     "144":"LK","148":"TD","152":"CL","156":"CN","158":"TW","170":"CO","178":"CG","180":"CD","188":"CR","191":"HR",
     "192":"CU","196":"CY","203":"CZ","204":"BJ","208":"DK","214":"DO","218":"EC","222":"SV","226":"GQ","231":"ET",
-    "232":"ER","233":"EE","242":"FJ","246":"FI","250":"FR","258":"PF","262":"DJ","266":"GA","268":"GE","270":"GM",
+    "232":"ER","233":"EE","238":"FK","242":"FJ","246":"FI","250":"FR","258":"PF","262":"DJ","266":"GA","268":"GE","270":"GM",
     "275":"PS","276":"DE","288":"GH","300":"GR","304":"GL","320":"GT","324":"GN","328":"GY","332":"HT","340":"HN",
     "348":"HU","352":"IS","356":"IN","360":"ID","364":"IR","368":"IQ","372":"IE","376":"IL","380":"IT","384":"CI",
     "388":"JM","392":"JP","398":"KZ","400":"JO","404":"KE","408":"KP","410":"KR","414":"KW","417":"KG","418":"LA",
@@ -481,21 +482,22 @@
       shortName: "ihq-eu",
       cloud: "AWS",
       regionCode: "eu-west-1",
-      regionLabel: "Europe (Ireland)",
+      regionLabel: "EU/EMEA (Ireland hub)",
       model: "Intent Hosted (multi-tenant)",
       computePath: "Databricks preferred (present) · NexusOne portable fallback",
       llmPath: "Existing stack / Bedrock where applicable",
       status: "Live",
       hub: { lat: 53.3498, lng: -6.2603, label: "Dublin" },
       secondaryHubs: [{ lat: 50.1109, lng: 8.6821, label: "Frankfurt landing" }],
-      countries: ["IE","GB","NO","SE","DK","FI","IS","NL","BE","FR","ES","PT","IT","LU","MT","CY","GR"],
-      countryNames: ["Ireland","United Kingdom","Norway","Sweden","Denmark","Finland","Iceland","Netherlands","Belgium","France","Spain","Portugal","Italy","Luxembourg","Malta","Cyprus","Greece"],
+      catchmentLabel: "EU/EMEA hub (Ireland catchment)",
+      countries: ["IE","GB","NO","SE","DK","FI","IS","NL","BE","FR","ES","PT","IT","LU","MT","CY","GR","AE","IL","TR","EG","SA","QA","BH","KW","OM","JO","LB"],
+      countryNames: ["Ireland","United Kingdom","Norway","Sweden","Denmark","Finland","Iceland","Netherlands","Belgium","France","Spain","Portugal","Italy","Luxembourg","Malta","Cyprus","Greece","United Arab Emirates","Israel","Turkey","Egypt","Saudi Arabia","Qatar","Bahrain","Kuwait","Oman","Jordan","Lebanon"],
       clients: [
         { name: "Fishka", deploymentId: "ihq-eu", products: "Edge live · Lift eng · IntentOne interest", note: "Migrated from Anagog legacy" },
         { name: "MTN Nigeria", deploymentId: "ihq-eu", products: "Lift live · IntentOne live · Edge eng", note: "Lift + I1 via Frankfurt landing (eu-central-1 path)" }
       ],
       overlapProposedId: "p0-eu-ireland",
-      notes: "Live Intent Hosted EU. Fishka is the Edge reference client on ihq-eu. MTN Nigeria Lift + IntentOne land via Frankfurt. Proposed mid-market P0 expands the same Ireland region for self-signup.",
+      notes: "Live Intent Hosted EU Ireland hub with broader EU/EMEA catchment (not Ireland-only). Fishka is the Edge reference client on ihq-eu. MTN Nigeria Lift + IntentOne land via Frankfurt. DACH/CEE preferring DE residency map to Frankfurt. Proposed mid-market P0 expands the same Ireland catchment for self-signup.",
       source: "Customer Deployment Register · environments.md"
     },
     {
@@ -537,7 +539,8 @@
       countryNames: ["South Africa"],
       clients: [],
       overlapProposedId: "p0-south-africa",
-      notes: "Thin Azure SA footprint with no strong customer anchor. Distinct from Hosted ZA (ihq-za) and MTN-owned Azure (mtn-azure-za).",
+      catchmentLabel: "Azure SA hub (South Africa)",
+      notes: "Thin Azure SA footprint with no strong customer anchor. Primary coverage South Africa; nearby SADC soft/best-effort only. Distinct from Hosted ZA (ihq-za) and MTN-owned Azure (mtn-azure-za).",
       source: "environments.md"
     },
     {
@@ -641,14 +644,15 @@
       llmPath: "Bedrock / stack-local",
       status: "In development",
       hub: { lat: 39.0438, lng: -77.4874, label: "N. Virginia" },
-      countries: ["US","CA"],
-      countryNames: ["United States","Canada"],
+      catchmentLabel: "US East hub (US + Canada + Caribbean)",
+      countries: ["US","CA","BS","JM","HT","CU","DO","TT","BB","PR","GD","LC","VC","KN","KY","AW","CW","DM"],
+      countryNames: ["United States","Canada","Bahamas","Jamaica","Haiti","Cuba","Dominican Republic","Trinidad and Tobago","Barbados","Puerto Rico","Grenada","Saint Lucia","Saint Vincent and the Grenadines","Saint Kitts and Nevis","Cayman Islands","Aruba","Curaçao","Dominica"],
       clients: [
         { name: "YPF", deploymentId: "ihq-us-east", products: "Edge · IntentOne interest", note: "" },
         { name: "Grab", deploymentId: "ihq-us-east", products: "Edge eng (in development)", note: "" }
       ],
       overlapProposedId: "p0-us-east",
-      notes: "US East hosted path in development. Proposed P0 US East aligns mid-market self-signup with this residency pattern.",
+      notes: "US East hosted path in development. Catchment: US + Canada + Caribbean where mapped. Proposed P0 US East aligns mid-market self-signup with this residency pattern.",
       source: "Customer Deployment Register"
     },
     {
@@ -702,19 +706,20 @@
       shortName: "Vivo",
       cloud: "AWS",
       regionCode: "sa-east-1 (expected)",
-      regionLabel: "AWS Brazil",
+      regionLabel: "LatAm hub (South America catchment)",
       model: "In development",
       computePath: "Databricks preferred when present · NexusOne portable fallback",
       llmPath: "TBD / Model Serving when region Ready",
       status: "In development",
       hub: { lat: -23.5505, lng: -46.6333, label: "São Paulo" },
-      countries: ["BR"],
-      countryNames: ["Brazil"],
+      catchmentLabel: "LatAm hub (South America catchment)",
+      countries: ["BR","AR","CL","CO","PE","UY","PY","BO","EC","VE","GY","SR","FK"],
+      countryNames: ["Brazil","Argentina","Chile","Colombia","Peru","Uruguay","Paraguay","Bolivia","Ecuador","Venezuela","Guyana","Suriname","Falkland Islands"],
       clients: [
         { name: "Vivo", deploymentId: "(none listed)", products: "Edge eng · IntentOne eng", note: "AWS Brazil eng" }
       ],
       overlapProposedId: "p0-brazil-latam",
-      notes: "In-dev Brazil client path. Proposed P0 São Paulo expands self-signup LatAm coverage around the same hub.",
+      notes: "In-dev São Paulo LatAm hub. Catchment is most of South America (not Brazil alone). Proposed P0 São Paulo is the self-signup peer on the same catchment.",
       source: "Customer Deployment Register"
     },
     {
@@ -724,17 +729,18 @@
       shortName: "eu-west-1 self-signup",
       cloud: "AWS",
       regionCode: "eu-west-1",
-      regionLabel: "Europe (Ireland) · mid-market self-signup",
+      regionLabel: "EU/EMEA (Ireland hub) · mid-market self-signup",
       model: "Proposed P0 · IntentOne-hosted region-pinned",
       computePath: "Databricks preferred (already on Hosted EU) · NexusOne portable fallback",
       llmPath: "Amazon Bedrock · Claude",
       status: "Ready",
       hub: { lat: 53.45, lng: -6.05, label: "Dublin P0" },
-      countries: ["IE","GB","NO","SE","DK","FI","IS","NL","BE","FR","ES","PT","IT","LU","MT","CY","GR"],
-      countryNames: ["Ireland","United Kingdom","Norway","Sweden","Denmark","Finland","Iceland","Netherlands","Belgium","France","Spain","Portugal","Italy","Luxembourg","Malta","Cyprus","Greece"],
+      catchmentLabel: "EU/EMEA hub (Ireland catchment)",
+      countries: ["IE","GB","NO","SE","DK","FI","IS","NL","BE","FR","ES","PT","IT","LU","MT","CY","GR","AE","IL","TR","EG","SA","QA","BH","KW","OM","JO","LB"],
+      countryNames: ["Ireland","United Kingdom","Norway","Sweden","Denmark","Finland","Iceland","Netherlands","Belgium","France","Spain","Portugal","Italy","Luxembourg","Malta","Cyprus","Greece","United Arab Emirates","Israel","Turkey","Egypt","Saudi Arabia","Qatar","Bahrain","Kuwait","Oman","Jordan","Lebanon"],
       clients: [],
       overlapLiveId: "live-ihq-eu",
-      notes: "Proposed mid-market P0 for Ireland, UK, Nordics, Benelux, and general EU English-preferred. Overlaps live Hosted EU (Fishka et al.): live clients stay on green detail; this card is the self-signup expansion path. DACH preferring DE residency should use P0 Frankfurt.",
+      notes: "Proposed mid-market P0 Ireland hub with broader EU/EMEA catchment (not Ireland-only): UK, Nordics, Benelux, Southern EU, and English-preferred Middle East. Overlaps live Hosted EU (Fishka et al.): live clients stay on green detail; this card is the self-signup expansion path. DACH/CEE preferring DE residency should use P0 Frankfurt.",
       source: "Approved mid-market GTM P0"
     },
     {
@@ -750,11 +756,12 @@
       llmPath: "Amazon Bedrock · Claude",
       status: "Ready",
       hub: { lat: 50.05, lng: 8.75, label: "Frankfurt P0" },
-      countries: ["DE","AT","CH","PL","CZ","SK","HU","RO","BG","SI","HR","EE","LV","LT"],
-      countryNames: ["Germany","Austria","Switzerland","Poland","Czechia","Slovakia","Hungary","Romania","Bulgaria","Slovenia","Croatia","Estonia","Latvia","Lithuania"],
+      catchmentLabel: "DACH + Central/Eastern EU hub",
+      countries: ["DE","AT","CH","PL","CZ","SK","HU","RO","BG","SI","HR","EE","LV","LT","UA","MD","RS","BA","ME","MK","AL"],
+      countryNames: ["Germany","Austria","Switzerland","Poland","Czechia","Slovakia","Hungary","Romania","Bulgaria","Slovenia","Croatia","Estonia","Latvia","Lithuania","Ukraine","Moldova","Serbia","Bosnia and Herzegovina","Montenegro","North Macedonia","Albania"],
       clients: [],
       overlapLiveId: "live-ihq-eu",
-      notes: "Coverage for DACH and CEE preferring DE residency. Live MTN Nigeria also uses Frankfurt landing under ihq-eu - different tenancy; proposed card is mid-market self-signup only.",
+      notes: "Frankfurt hub catchment: DACH plus nearby Central/Eastern EU. Live MTN Nigeria also uses Frankfurt landing under ihq-eu - different tenancy; proposed card is mid-market self-signup only.",
       source: "Approved mid-market GTM P0"
     },
     {
@@ -770,11 +777,12 @@
       llmPath: "Amazon Bedrock · Claude",
       status: "Ready",
       hub: { lat: 38.9, lng: -77.3, label: "N. Virginia P0" },
-      countries: ["US","CA"],
-      countryNames: ["United States","Canada"],
+      catchmentLabel: "US East hub (US + Canada + Caribbean)",
+      countries: ["US","CA","BS","JM","HT","CU","DO","TT","BB","PR","GD","LC","VC","KN","KY","AW","CW","DM"],
+      countryNames: ["United States","Canada","Bahamas","Jamaica","Haiti","Cuba","Dominican Republic","Trinidad and Tobago","Barbados","Puerto Rico","Grenada","Saint Lucia","Saint Vincent and the Grenadines","Saint Kitts and Nevis","Cayman Islands","Aruba","Curaçao","Dominica"],
       clients: [],
       overlapLiveId: "indev-ihq-us-east",
-      notes: "Default Americas mid-market until Phase 2 Canada-specific. Aligns with US East in-dev pattern and nearby Cable Bahamas dedicated. Live clients listed on their own cards; this is self-signup expansion.",
+      notes: "US East hub catchment: United States, Canada, and Caribbean where mapped. Default Americas mid-market until Phase 2 Canada-specific. Aligns with US East in-dev pattern and nearby Cable Bahamas dedicated. Live clients listed on their own cards; this is self-signup expansion.",
       source: "Approved mid-market GTM P0"
     },
     {
@@ -784,17 +792,18 @@
       shortName: "sa-east-1 self-signup",
       cloud: "AWS",
       regionCode: "sa-east-1",
-      regionLabel: "South America (São Paulo) · mid-market",
+      regionLabel: "LatAm hub (South America catchment) · mid-market",
       model: "Proposed P0 · IntentOne-hosted region-pinned",
       computePath: "Databricks Model Serving preferred · NexusOne portable fallback",
       llmPath: "Databricks Model Serving",
       status: "Ready",
       hub: { lat: -23.65, lng: -46.5, label: "São Paulo P0" },
-      countries: ["BR","MX","AR","CL","CO","PE","UY","PY","EC","VE","BO","CR","PA","GT","HN","SV","NI","DO"],
-      countryNames: ["Brazil","Mexico","Argentina","Chile","Colombia","Peru","Uruguay","Paraguay","Ecuador","Venezuela","Bolivia","Costa Rica","Panama","Guatemala","Honduras","El Salvador","Nicaragua","Dominican Republic"],
+      catchmentLabel: "LatAm hub (South America catchment)",
+      countries: ["BR","AR","CL","CO","PE","UY","PY","BO","EC","VE","GY","SR","FK"],
+      countryNames: ["Brazil","Argentina","Chile","Colombia","Peru","Uruguay","Paraguay","Bolivia","Ecuador","Venezuela","Guyana","Suriname","Falkland Islands"],
       clients: [],
       overlapLiveId: "indev-vivo-br",
-      notes: "São Paulo is the pin. Covers Brazil + broader LatAm. Overlaps in-dev Vivo Brazil path - proposed is self-signup mid-market coverage.",
+      notes: "São Paulo is the pin. LatAm hub with most-of-South-America catchment (BR, AR, CL, CO, PE, UY, PY, BO, EC, VE, GY, SR, FK where mapped), not Brazil alone. Overlaps in-dev Vivo Brazil path - proposed is self-signup mid-market coverage.",
       source: "Approved mid-market GTM P0"
     },
     {
@@ -810,11 +819,12 @@
       llmPath: "Azure OpenAI",
       status: "Ready",
       hub: { lat: -26.35, lng: 28.2, label: "JHB Azure P0" },
-      countries: ["ZA","NG","KE","GH","TZ","UG","RW","ZM","ZW","BW","NA","MZ","ET","SN","CI","CM"],
-      countryNames: ["South Africa","Nigeria","Kenya","Ghana","Tanzania","Uganda","Rwanda","Zambia","Zimbabwe","Botswana","Namibia","Mozambique","Ethiopia","Senegal","Côte d'Ivoire","Cameroon"],
+      catchmentLabel: "Azure SA hub (South Africa)",
+      countries: ["ZA"],
+      countryNames: ["South Africa"],
       clients: [],
       overlapLiveId: "live-mtn-azure-za",
-      notes: "Azure southafricanorth (not AWS Cape Town). SSA broader coverage best-effort. Live Hosted ZA, thin ihq-azure-za, and MTN Azure are green/thin peers; this card is mid-market self-signup.",
+      notes: "Azure southafricanorth (not AWS Cape Town). Primary catchment is South Africa. Soft note: nearby SADC markets (e.g. Botswana, Namibia, Eswatini, Lesotho, Mozambique, Zimbabwe, Zambia) may be served best-effort from the same hub but are not painted as full coverage. Live Hosted ZA, thin ihq-azure-za, and MTN Azure are green/thin peers; this card is mid-market self-signup.",
       source: "Approved mid-market GTM P0"
     }
   ];
@@ -945,13 +955,14 @@
         <dt>Region</dt><dd><code>${d.regionCode}</code></dd>
         <dt>Model</dt><dd>${d.model}</dd>
         <dt>Hub</dt><dd>${d.hub.label}</dd>
+        ${d.catchmentLabel ? `<dt>Catchment</dt><dd>${d.catchmentLabel}</dd>` : ""}
       </dl>
       <div class="block">
         <h3>Clients · products</h3>
         ${clientsHtml}
       </div>
       <div class="block">
-        <h3>Coverage countries</h3>
+        <h3>Catchment countries</h3>
         <div class="country-list">${countries}</div>
       </div>
       <div class="block">
@@ -1101,7 +1112,7 @@
     });
 
     try {
-      const topo = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
+      const topo = await d3.json("./countries-110m.json").catch(() => d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"));
       const countries = topojson.feature(topo, topo.objects.countries);
 
       countryPaths = gCountries.selectAll("path")
